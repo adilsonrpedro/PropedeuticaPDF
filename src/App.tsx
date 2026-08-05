@@ -54,24 +54,14 @@ export default function App() {
 
       {/* Main Header */}
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 backdrop-blur-md shadow-sm">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-5 sm:px-6">
-          
-          {/* LOGO Y TÍTULO EN MEDIDAS GRANDES */}
-          <div className="flex items-center gap-4">
-            <div className="p-1.5 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-2xl shadow-lg shadow-teal-100/80 shrink-0">
-              <img 
-                src="/file_00000000e560820eaf798f5139d704c9.png" 
-                alt="Logo" 
-                className="h-14 w-14 rounded-xl object-contain bg-white sm:h-16 sm:w-16" 
-              />
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="p-1 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-xl shadow-md shadow-teal-100">
+              <img src="/file_00000000e560820eaf798f5139d704c9.png" alt="Logo" className="h-9 w-9 rounded-lg object-contain bg-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-900 sm:text-3xl bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                {t.appTitle}
-              </h1>
-              <p className="hidden text-xs font-semibold uppercase tracking-wider text-teal-600 mt-0.5 sm:block">
-                {t.appTagline}
-              </p>
+              <h1 className="text-base font-extrabold tracking-tight text-slate-900 sm:text-xl">{t.appTitle}</h1>
+              <p className="hidden text-xs font-medium text-slate-500 sm:block">{t.appTagline}</p>
             </div>
           </div>
 
@@ -81,7 +71,7 @@ export default function App() {
               <button
                 key={id}
                 onClick={() => setTab(id)}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${tab === id ? 'bg-teal-600 text-white shadow-md shadow-teal-100' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${tab === id ? 'bg-teal-600 text-white shadow-md shadow-teal-100' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
               >
                 <Icon size={16} />
                 <span>{label}</span>
@@ -90,8 +80,8 @@ export default function App() {
           </nav>
         </div>
 
-        {/* Mobile Navigation (Bottom of header) */}
-        <nav className="border-t border-slate-100 bg-white px-2 py-2 md:hidden">
+        {/* Mobile Navigation (Bottom of header, visible text) */}
+        <nav className="border-t border-slate-100 bg-white px-2 py-1.5 md:hidden">
           <div className="flex justify-around items-center gap-1">
             {tabs.map(({ id, label, icon: Icon }) => (
               <button
