@@ -1,6 +1,6 @@
 import { PDFDocument, degrees } from 'pdf-lib';
 
-const LOGO_URL = '/file_000000003874720e8c35415ee6d4d0b6.png';
+const LOGO_URL = '/file_00000000e560820eaf798f5139d704c9.png';
 
 let cachedBytes: Promise<Uint8Array> | null = null;
 

@@ -57,7 +57,7 @@ export default function App() {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="p-1 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-xl shadow-md shadow-teal-100">
-              <img src="/file_000000003874720e8c35415ee6d4d0b6.png" alt="Logo" className="h-9 w-9 rounded-lg object-contain bg-white" />
+              <img src="/file_00000000e560820eaf798f5139d704c9.png" alt="Logo" className="h-9 w-9 rounded-lg object-contain bg-white" />
             </div>
             <div>
               <h1 className="text-base font-extrabold tracking-tight text-slate-900 sm:text-xl">{t.appTitle}</h1>
