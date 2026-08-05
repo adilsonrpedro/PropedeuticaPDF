@@ -20,9 +20,9 @@ export default function App() {
   };
 
   const tabs: { id: TabId; label: string; icon: typeof FileText }[] = [
+    { id: 'transcription', label: t.navTranscription, icon: AudioLines },
     { id: 'pdf', label: t.navPdf, icon: FileText },
     { id: 'speech', label: t.navSpeech, icon: Mic },
-    { id: 'transcription', label: t.navTranscription, icon: AudioLines },
     { id: 'about', label: t.navAbout, icon: Info },
   ];
 
@@ -33,56 +33,89 @@ export default function App() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <img src="/file_000000003874720e8c35415ee6d4d0b6.png" alt="Logo" className="h-9 w-9 rounded-xl object-contain shadow-sm" />
-            <div>
-              <h1 className="text-base font-bold leading-tight text-slate-900 sm:text-lg">{t.appTitle}</h1>
-              <p className="hidden text-xs text-slate-500 sm:block">{t.appTagline}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1">
-            <Globe size={15} className="ml-1 text-slate-400" />
+    <div className="flex min-h-screen flex-col bg-slate-50/50 font-sans antialiased text-slate-800">
+      {/* Top Utility Bar (Idioma) */}
+      <div className="bg-slate-900 py-1.5 text-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-end px-4 sm:px-6">
+          <div className="flex items-center gap-1 rounded-lg bg-slate-800 p-0.5 border border-slate-700">
+            <Globe size={13} className="ml-1.5 text-slate-400" />
             {langOptions.map((opt) => (
               <button
                 key={opt.code}
                 onClick={() => setLang(opt.code)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${lang === opt.code ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`rounded px-2 py-0.5 text-[11px] font-semibold transition ${lang === opt.code ? 'bg-teal-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                {opt.label}
+                <span className="mr-1">{opt.flag}</span>{opt.label}
               </button>
             ))}
           </div>
         </div>
+      </div>
 
-        <nav className="mx-auto max-w-5xl px-2 sm:px-6">
-          <div className="flex gap-1 overflow-x-auto pb-2">
+      {/* Main Header */}
+      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 backdrop-blur-md shadow-sm">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="p-1 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-xl shadow-md shadow-teal-100">
+              <img src="/file_000000003874720e8c35415ee6d4d0b6.png" alt="Logo" className="h-9 w-9 rounded-lg object-contain bg-white" />
+            </div>
+            <div>
+              <h1 className="text-base font-extrabold tracking-tight text-slate-900 sm:text-xl">{t.appTitle}</h1>
+              <p className="hidden text-xs font-medium text-slate-500 sm:block">{t.appTagline}</p>
+            </div>
+          </div>
+
+          {/* Navigation Inside Header (Desktop) */}
+          <nav className="hidden md:flex items-center gap-1">
             {tabs.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 onClick={() => setTab(id)}
-                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${tab === id ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${tab === id ? 'bg-teal-600 text-white shadow-md shadow-teal-100' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
               >
-                <Icon size={17} />
-                <span className="hidden sm:inline">{label}</span>
+                <Icon size={16} />
+                <span>{label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Mobile Navigation (Bottom of header, visible text) */}
+        <nav className="border-t border-slate-100 bg-white px-2 py-1.5 md:hidden">
+          <div className="flex justify-around items-center gap-1">
+            {tabs.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => setTab(id)}
+                className={`flex flex-col items-center gap-1 rounded-xl py-1.5 px-3 text-center transition-all ${tab === id ? 'text-teal-600 font-bold bg-teal-50/60' : 'text-slate-500 font-medium'}`}
+              >
+                <Icon size={18} className={tab === id ? 'text-teal-600' : 'text-slate-400'} />
+                <span className="text-[10px] tracking-tight">{label}</span>
               </button>
             ))}
           </div>
         </nav>
       </header>
 
-      <main className="flex-1 py-6 sm:py-8">
-        {tab === 'pdf' && <PdfTab t={t} />}
-        {tab === 'speech' && <SpeechTab t={t} />}
-        {tab === 'transcription' && <TranscriptionTab t={t} onReviewSubmitted={handleReviewSubmitted} />}
-        {tab === 'about' && <AboutTab t={t} />}
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 sm:px-6 sm:py-10">
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-5 sm:p-8 min-h-[400px]">
+          {tab === 'pdf' && <PdfTab t={t} />}
+          {tab === 'speech' && <SpeechTab t={t} />}
+          {tab === 'transcription' && <TranscriptionTab t={t} onReviewSubmitted={handleReviewSubmitted} />}
+          {tab === 'about' && <AboutTab t={t} />}
+        </div>
       </main>
 
-      <footer className={`border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-400 transition ${reviewPulse ? 'text-emerald-500' : ''}`}>
-        {reviewPulse ? t.reviewThanks : t.footerText}
+      {/* Footer */}
+      <footer className={`border-t border-slate-200 bg-white py-5 text-center text-xs font-medium tracking-wide text-slate-400 transition-all duration-300 ${reviewPulse ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : ''}`}>
+        <div className="max-w-5xl mx-auto px-4">
+          {reviewPulse ? (
+            <span className="flex items-center justify-center gap-1.5 font-semibold animate-pulse">✨ {t.reviewThanks}</span>
+          ) : (
+            t.footerText
+          )}
+        </div>
       </footer>
     </div>
   );
