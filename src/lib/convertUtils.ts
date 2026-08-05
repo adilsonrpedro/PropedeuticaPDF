@@ -4,6 +4,7 @@ import JSZip from 'jszip';
 import { detectKind, baseName, type FileKind } from './fileUtils';
 import { fileToPdfPages, extractPdfText, extractPptxAsHtml, extractDocxAsHtml, extractDocxText, extractPptxText } from './pdfUtils';
 import { convertPptxToPdf, convertDocxToPdf, type ProgressInfo } from './visualConvert';
+import { applyWatermarkToPdfDoc } from './watermark';
 
 export type ConvertTarget = 'pdf' | 'docx' | 'md';
 export type DownloadMode = 'unified' | 'separate';
@@ -90,15 +91,20 @@ async function convertSingleToPdf(file: File, kind: FileKind, onProgress?: (p: P
   if (kind === 'image') {
     const pdf = await PDFDocument.create();
     await fileToPdfPages(file, pdf, 'image');
+    await applyWatermarkToPdfDoc(pdf);
     const out = await pdf.save();
     return new Blob([out as unknown as BlobPart], { type: 'application/pdf' });
   }
   if (kind === 'pdf') {
     const bytes = await file.arrayBuffer();
-    return new Blob([bytes], { type: 'application/pdf' });
+    const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    await applyWatermarkToPdfDoc(pdfDoc);
+    const out = await pdfDoc.save();
+    return new Blob([out as unknown as BlobPart], { type: 'application/pdf' });
   }
   const pdf = await PDFDocument.create();
   await fileToPdfPages(file, pdf, kind);
+  await applyWatermarkToPdfDoc(pdf);
   const out = await pdf.save();
   return new Blob([out as unknown as BlobPart], { type: 'application/pdf' });
 }
@@ -232,8 +238,21 @@ async function buildUnifiedPdf(files: File[]): Promise<Blob> {
   const pdf = await PDFDocument.create();
   for (const file of files) {
     const kind = detectKind(file);
-    await fileToPdfPages(file, pdf, kind);
+    if (kind === 'docx') {
+      const docxBlob = await convertDocxToPdf(file);
+      const docxPdf = await PDFDocument.load(await docxBlob.arrayBuffer());
+      const pages = await pdf.copyPages(docxPdf, docxPdf.getPageIndices());
+      pages.forEach((p) => pdf.addPage(p));
+    } else if (kind === 'pptx' || kind === 'potx') {
+      const pptxBlob = await convertPptxToPdf(file);
+      const pptxPdf = await PDFDocument.load(await pptxBlob.arrayBuffer());
+      const pages = await pdf.copyPages(pptxPdf, pptxPdf.getPageIndices());
+      pages.forEach((p) => pdf.addPage(p));
+    } else {
+      await fileToPdfPages(file, pdf, kind);
+    }
   }
+  await applyWatermarkToPdfDoc(pdf);
   const out = await pdf.save();
   return new Blob([out as unknown as BlobPart], { type: 'application/pdf' });
 }

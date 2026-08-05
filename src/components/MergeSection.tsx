@@ -7,6 +7,7 @@ import { fileToPdfPages } from '../lib/pdfUtils';
 import { convertDocxToPdf, convertPptxToPdf } from '../lib/visualConvert';
 import { PDFDocument } from 'pdf-lib';
 import { downloadBlob } from '../lib/convertUtils';
+import { applyWatermarkToPdfDoc } from '../lib/watermark';
 import type { Translation } from '../lib/i18n';
 
 interface MergeSectionProps { t: Translation; }
@@ -48,6 +49,7 @@ export default function MergeSection({ t }: MergeSectionProps) {
           await fileToPdfPages(file, pdf, kind);
         }
       }
+      await applyWatermarkToPdfDoc(pdf);
       const out = await pdf.save();
       downloadBlob(new Blob([out as unknown as BlobPart], { type: 'application/pdf' }), 'merged.pdf');
       setDone(true);

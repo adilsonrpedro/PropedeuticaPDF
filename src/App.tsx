@@ -37,9 +37,7 @@ export default function App() {
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-600 text-white shadow-sm">
-              <FileText size={20} />
-            </div>
+            <img src="/file_000000003874720e8c35415ee6d4d0b6.png" alt="Logo" className="h-9 w-9 rounded-xl object-contain shadow-sm" />
             <div>
               <h1 className="text-base font-bold leading-tight text-slate-900 sm:text-lg">{t.appTitle}</h1>
               <p className="hidden text-xs text-slate-500 sm:block">{t.appTagline}</p>

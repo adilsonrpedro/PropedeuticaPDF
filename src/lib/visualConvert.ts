@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import { jsPDF } from 'jspdf';
+import { applyWatermarkToJsPdf } from './watermark';
 
 export interface ProgressInfo { phase: string; percent: number; }
 
@@ -310,6 +311,7 @@ export async function convertPptxToPdf(
 
   Object.values(images).forEach((url) => URL.revokeObjectURL(url));
   onProgress?.({ phase: 'Finalizing PDF', percent: 100 });
+  await applyWatermarkToJsPdf(pdf);
   return pdf.output('blob');
 }
 
@@ -388,5 +390,6 @@ export async function convertDocxToPdf(
   }
 
   onProgress?.({ phase: 'Finalizing PDF', percent: 100 });
+  await applyWatermarkToJsPdf(pdf);
   return pdf.output('blob');
 }

@@ -3,6 +3,7 @@ import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { Loader as Loader2, ScanText, Copy, Check, Download, Search, CircleAlert as AlertCircle, FileSearch } from 'lucide-react';
 import DropZone from './DropZone';
 import ReviewForm from './ReviewForm';
+import { applyWatermarkToPdfDoc } from '../lib/watermark';
 import type { Translation } from '../lib/i18n';
 import { saveAs } from 'file-saver';
 
@@ -133,6 +134,7 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
         setProgress(Math.round((i / pdf.numPages) * 100));
       }
       await worker.terminate();
+      await applyWatermarkToPdfDoc(pdfDoc);
       setSearchablePdf(await pdfDoc.save() as unknown as ArrayBuffer);
       setShowReview(true);
     } catch (e) {

@@ -6,6 +6,7 @@ import { renderPdfPages, loadPdfDocument } from '../lib/pdfUtils';
 import { PDFDocument } from 'pdf-lib';
 import JSZip from 'jszip';
 import { downloadBlob } from '../lib/convertUtils';
+import { applyWatermarkToPdfDoc } from '../lib/watermark';
 import type { Translation } from '../lib/i18n';
 
 interface SplitSectionProps { t: Translation; }
@@ -43,6 +44,7 @@ export default function SplitSection({ t }: SplitSectionProps) {
         for (let p = allCuts[i]; p < allCuts[i + 1]; p++) indices.push(p);
         const copied = await partDoc.copyPages(srcDoc, indices);
         copied.forEach((p) => partDoc.addPage(p));
+        await applyWatermarkToPdfDoc(partDoc);
         parts.push({ name: `${t.pdfSplitPart}-${i + 1}.pdf`, bytes: await partDoc.save() });
       }
       if (parts.length === 1) { downloadBlob(new Blob([parts[0].bytes as unknown as BlobPart], { type: 'application/pdf' }), parts[0].name); }
