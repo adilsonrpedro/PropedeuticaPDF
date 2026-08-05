@@ -56,8 +56,8 @@ export default function App() {
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 backdrop-blur-md shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="p-1 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-xl shadow-md shadow-teal-100">
-              <img src="/file_00000000e560820eaf798f5139d704c9.png" alt="Logo" className="h-9 w-9 rounded-lg object-contain bg-white" />
+            <div className="p-1 bg-gradient-to-tr from-teal-600 to-emerald-500 rounded-xl shadow-md shadow-teal-100 md:p-2 md:rounded-2xl">
+              <img src="/file_00000000e560820eaf798f5139d704c9.png" alt="Logo" className="h-16 w-16 rounded-lg object-contain bg-white md:h-[280px] md:w-[280px]" />
             </div>
             <div>
               <h1 className="text-base font-extrabold tracking-tight text-slate-900 sm:text-xl">{t.appTitle}</h1>
