@@ -1,184 +1,262 @@
-import { useState } from 'react';
-import { FileText, Mic, AudioLines, Info, Globe, Sparkles } from 'lucide-react';
-import { getTranslation, type Lang, type Translation } from './lib/i18n';
-import PdfTab from './components/PdfTab';
-import SpeechTab from './components/SpeechTab';
-import TranscriptionTab from './components/TranscriptionTab';
+import React, { useState } from 'react';
+import './App.css';
 import AboutTab from './components/AboutTab';
+import ConvertSection from './components/ConvertSection';
+import DropZone from './components/DropZone';
+import FilePreview from './components/FilePreview';
+import MergeSection from './components/MergeSection';
+import Modal from './components/Modal';
+import PdfTab from './components/PdfTab';
+import ReviewForm from './components/ReviewForm';
+import SpeechTab from './components/SpeechTab';
+import SplitSection from './components/SplitSection';
+import TranscriptionTab from './components/TranscriptionTab';
 
-type TabId = 'pdf' | 'speech' | 'transcription' | 'about';
+type Language = 'pt' | 'es' | 'en';
 
-export default function App() {
-  const [lang, setLang] = useState<Lang>('es');
-  const [tab, setTab] = useState<TabId>('transcription');
-  const [reviewPulse, setReviewPulse] = useState(false);
-  const t = getTranslation(lang);
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>('pdf');
+  const [language, setLanguage] = useState<Language>('pt');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Estado para gerenciar arquivo ativo na conversão/fala
+  const [activeFileId, setActiveFileId] = useState<string | null>(null);
 
-  const handleReviewSubmitted = () => {
-    setReviewPulse(true);
-    setTimeout(() => setReviewPulse(false), 3000);
+  // Tradução simples fallback (ajuste conforme seu i18n.ts)
+  const t = (key: string): string => {
+    return key; 
   };
 
-  const tabs: { id: TabId; label: string; icon: typeof FileText; desc: string }[] = [
-    { id: 'transcription', label: t.navTranscription, icon: AudioLines, desc: 'Audio a texto' },
-    { id: 'pdf', label: t.navPdf, icon: FileText, desc: 'Extraer de documentos' },
-    { id: 'speech', label: t.navSpeech, icon: Mic, desc: 'Dictado en vivo' },
-    { id: 'about', label: t.navAbout, icon: Info, desc: 'Información general' },
+  const tabsData = [
+    { id: 'pdf', label: 'PDF Básico', icon: '📄', desc: 'Operações básicas' },
+    { id: 'convert', label: 'Conversor', icon: '🔄', desc: 'Converter formatos' },
+    { id: 'speech', label: 'Voz em Texto', icon: '🎙️', desc: 'Dictado ao vivo' },
+    { id: 'transcription', label: 'Transcrição', icon: '📝', desc: 'Audio para texto' },
+    { id: 'about', label: 'Sobre', icon: 'ℹ️', desc: 'Informações' },
   ];
 
-  const langOptions: { code: Lang; label: string; flag: string }[] = [
-    { code: 'pt', label: 'PT', flag: '🇧🇷' },
-    { code: 'es', label: 'ES', flag: '🇵🇾' },
-    { code: 'en', label: 'EN', flag: '🇬🇧' },
-  ];
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'pdf':
+        return (
+          <div className="space-y-6">
+            {/* Abas internas para PDF */}
+            <div className="flex gap-2 mb-4 border-b pb-2">
+              <button 
+                onClick={() => setActivePdfSubTab('basic')}
+                className={`px-3 py-1.5 text-sm font-medium rounded-t-lg transition ${activePdfSubTab === 'basic' ? 'bg-teal-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+              >
+                PDF Básico
+              </button>
+              <button 
+                onClick={() => setActivePdfSubTab('merge')}
+                className={`px-3 py-1.5 text-sm font-medium rounded-t-lg transition ${activePdfSubTab === 'merge' ? 'bg-teal-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+              >
+                Unir PDFs
+              </button>
+              <button 
+                onClick={() => setActivePdfSubTab('split')}
+                className={`px-3 py-1.5 text-sm font-medium rounded-t-lg transition ${activePdfSubTab === 'split' ? 'bg-teal-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+              >
+                Dividir PDFs
+              </button>
+            </div>
+
+            {activePdfSubTab === 'basic' && <PdfTab lang={language} />}
+            
+            {(activePdfSubTab === 'merge' || activePdfSubTab === 'split') && (
+              <>
+                {/* DropZone compartilhado para Merge/Split */}
+                <DropZone 
+                  lang={language} 
+                  onFileSelect={(id) => setActiveFileId(id)}
+                />
+                
+                {activeFileId && <FilePreview fileId={activeFileId} />}
+
+                {activePdfSubTab === 'merge' ? (
+                  <MergeSection lang={language} onFeedback={() => setIsModalOpen(true)} />
+                ) : (
+                  <SplitSection lang={language} />
+                )}
+              </>
+            )}
+          </div>
+        );
+
+      case 'convert':
+        return (
+          <div className="space-y-4">
+            <DropZone 
+              lang={language} 
+              onFileSelect={(id) => setActiveFileId(id)}
+            />
+            
+            {activeFileId && <FilePreview fileId={activeFileId} />}
+
+            <ConvertSection 
+              lang={language} 
+              activeFileId={activeFileId} 
+              onFileSelect={(id) => setActiveFileId(id)}
+            />
+          </div>
+        );
+
+      case 'speech':
+        return (
+          <div className="space-y-4">
+            {/* DropZone para upload de áudio antes da fala */}
+            <DropZone 
+              lang={language} 
+              onFileSelect={(id) => setActiveFileId(id)}
+            />
+            
+            {activeFileId && <FilePreview fileId={activeFileId} />}
+
+            <SpeechTab 
+              lang={language} 
+              activeFileId={activeFileId} 
+              onFileSelect={(id) => setActiveFileId(id)}
+            />
+          </div>
+        );
+
+      case 'transcription':
+        return (
+          <TranscriptionTab lang={language} />
+        );
+
+      case 'about':
+        return (
+          <AboutTab lang={language} />
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-900 font-sans antialiased text-slate-200">
-      
-      {/* 1. SIDEBAR (Solo visible en pantallas grandes - Escritorio) */}
-      <aside className="hidden md:flex w-72 flex-col bg-slate-950 border-r border-slate-800/60 p-5 shrink-0 justify-between">
-        <div className="flex flex-col gap-6">
-          {/* Brand/Logo Area */}
-          <div className="flex items-center gap-3.5 px-2 py-1">
-            <div className="p-2 bg-gradient-to-tr from-teal-500 to-emerald-400 rounded-xl shadow-lg shadow-teal-500/10 shrink-0">
-              <img 
-                src="/file_00000000e560820eaf798f5139d704c9.png" 
-                alt="Logo" 
-                className="h-9 w-9 rounded-lg object-contain bg-white" 
-              />
-            </div>
-            <div>
-              <h1 className="text-lg font-black tracking-tight text-white leading-tight flex items-center gap-1.5">
-                {t.appTitle}
-                <Sparkles size={14} className="text-teal-400 fill-teal-400 animate-pulse" />
-              </h1>
-              <p className="text-[11px] font-medium text-slate-400 mt-0.5 max-w-[160px] truncate">{t.appTagline}</p>
-            </div>
+    <>
+      {/* Layout Desktop/Tablet */}
+      <div className="flex h-screen bg-slate-950 text-slate-100">
+        
+        {/* Sidebar - Visível em telas grandes (Tablet/Desktop) */}
+        <aside className="hidden md:flex w-64 flex-col border-r border-slate-800/50 bg-slate-900/30 backdrop-blur-xl p-4 gap-2">
+          {/* Logo / Header da Sidebar */}
+          <div className="mb-6 px-2 py-1">
+            <h1 className="text-lg font-bold text-teal-400 tracking-tight flex items-center gap-2">
+              🧠 PropedeuticaPDF
+            </h1>
+            <p className="text-xs text-slate-500 mt-1 pl-8">Proced. Méd. Inteligente</p>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="flex flex-col gap-1.5">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-3 mb-2">Herramientas</div>
-            {tabs.map(({ id, label, icon: Icon, desc }) => (
+          {/* Menu de Navegação */}
+          <nav className="flex flex-col gap-1">
+            {tabsData.map((tab) => (
               <button
-                key={id}
-                onClick={() => setTab(id)}
-                className={`group flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-semibold transition-all duration-200 ${
-                  tab === id 
-                    ? 'bg-teal-600 text-white shadow-md shadow-teal-600/10' 
-                    : 'text-slate-400 hover:bg-slate-900 hover:text-slate-100'
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                title={tab.desc}
+                aria-label={`Abrir ${tab.label}`}
+                className={`group flex items-center justify-between rounded-xl px-3.5 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer border-none outline-none ${
+                  activeTab === tab.id 
+                    ? 'bg-teal-600/10 text-teal-400 shadow-md shadow-teal-900/20 ring-1 ring-teal-500/30' 
+                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-100 active:scale-[0.98]'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Icon size={18} className={tab === id ? 'text-white' : 'text-slate-400 group-hover:text-teal-400 transition-colors'} />
-                  <div className="text-left">
-                    <span className="block leading-none">{label}</span>
-                    <span className={`text-[10px] block mt-0.5 font-normal ${tab === id ? 'text-teal-100' : 'text-slate-500'}`}>{desc}</span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{tab.icon}</span>
+                  {tab.label}
                 </div>
               </button>
             ))}
           </nav>
-        </div>
 
-        {/* Language Selector at Bottom of Sidebar */}
-        <div className="border-t border-slate-800/80 pt-4 flex flex-col gap-2">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-1">Idioma de la interfaz</div>
-          <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-900 p-1 border border-slate-800">
-            {langOptions.map((opt) => (
-              <button
-                key={opt.code}
-                onClick={() => setLang(opt.code)}
-                className={`rounded-lg py-1.5 text-xs font-bold transition flex items-center justify-center gap-1 ${
-                  lang === opt.code 
-                    ? 'bg-slate-800 text-teal-400 border border-slate-700/50 shadow-sm' 
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <span>{opt.flag}</span>
-                <span>{opt.code.toUpperCase()}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </aside>
-
-      {/* 2. MAIN APP WORKSPACE */}
-      <div className="flex flex-1 flex-col h-full bg-slate-900 relative">
-        
-        {/* Mobile Header (Solo visible en móviles) */}
-        <header className="flex md:hidden items-center justify-between bg-slate-950 border-b border-slate-800/80 px-4 py-3 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="p-1 bg-gradient-to-tr from-teal-500 to-emerald-400 rounded-lg shrink-0">
-              <img src="/file_00000000e560820eaf798f5139d704c9.png" alt="Logo" className="h-7 w-7 rounded object-contain bg-white" />
+          {/* Seletor de Idioma (Rodapé da Sidebar) */}
+          <div className="mt-auto pt-4 border-t border-slate-800/50">
+            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2 px-3">Idioma</p>
+            <div className="flex gap-1.5 px-1">
+              {['pt', 'es', 'en'].map((code) => (
+                <button
+                  key={code}
+                  onClick={() => setLanguage(code as Language)}
+                  title={`Mudar para ${code === 'pt' ? 'Português' : code === 'es' ? 'Español' : 'English'}`}
+                  aria-label={`Selecionar idioma: ${code}`}
+                  className={`rounded-lg py-1.5 text-[10px] font-bold transition-all cursor-pointer border-none outline-none flex items-center justify-center w-full ${
+                    language === code 
+                      ? 'bg-slate-800/60 text-teal-400 ring-1 ring-teal-500/30' 
+                      : 'text-slate-500 hover:text-slate-200 active:scale-95'
+                  }`}
+                >
+                  {code.toUpperCase()}
+                </button>
+              ))}
             </div>
-            <h1 className="text-sm font-extrabold text-white tracking-tight">{t.appTitle}</h1>
           </div>
+        </aside>
+
+        {/* Área Principal (Workspace) */}
+        <main className="flex-1 flex flex-col h-screen overflow-hidden">
           
-          {/* Mobile Language Compact Dropdown */}
-          <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-lg border border-slate-800">
-            {langOptions.map((opt) => (
-              <button
-                key={opt.code}
-                onClick={() => setLang(opt.code)}
-                className={`rounded px-2 py-1 text-[10px] font-bold ${lang === opt.code ? 'bg-teal-600 text-white' : 'text-slate-400'}`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </header>
-
-        {/* Workspace Canvas (Donde vive la magia) */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-4xl h-full flex flex-col">
+          {/* Header Mobile - Apenas visível em telas pequenas (celular) */}
+          <header className="md:hidden sticky top-0 z-20 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/40 px-4 py-3 flex items-center justify-between">
+            <h1 className="text-base font-bold text-teal-400 tracking-tight">🧠 PropedeuticaPDF</h1>
             
-            {/* Context Heading inside the page */}
-            <div className="mb-6 hidden md:block">
-              <h2 className="text-2xl font-bold tracking-tight text-white">
-                {tabs.find(t => t.id === tab)?.label}
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">Plataforma Inteligente de Procesamiento de Audio y Texto</p>
+            {/* Seletor de Idioma Compacto Mobile */}
+            <div className="flex gap-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-800/40">
+              {['pt', 'es', 'en'].map((code) => (
+                <button
+                  key={code}
+                  onClick={() => setLanguage(code as Language)}
+                  className={`rounded px-2 py-1 text-[9px] font-bold transition ${language === code ? 'bg-teal-600/80 text-white' : 'text-slate-500 active:text-slate-300'}`}
+                >
+                  {code.toUpperCase()}
+                </button>
+              ))}
             </div>
+          </header>
 
-            {/* Inner Feature Component Container */}
-            <div className="flex-1 bg-slate-950/40 border border-slate-800/50 rounded-2xl p-5 sm:p-8 shadow-2xl shadow-slate-950/50 backdrop-blur-sm min-h-[450px]">
-              {tab === 'pdf' && <PdfTab t={t} />}
-              {tab === 'speech' && <SpeechTab t={t} />}
-              {tab === 'transcription' && <TranscriptionTab t={t} onReviewSubmitted={handleReviewSubmitted} />}
-              {tab === 'about' && <AboutTab t={t} />}
-            </div>
-          </div>
+          {/* Conteúdo da Aba Ativa */}
+          <section className="flex-1 overflow-y-auto p-4 md:p-6">
+            
+            {/* Cabeçalho Contextual (Desktop/Tablet) */}
+            {activeTab !== 'about' && (
+              <div className="mb-6 hidden md:block">
+                <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2.5">
+                  <span>📂</span> 
+                  {tabsData.find(t => t.id === activeTab)?.label}
+                </h2>
+              </div>
+            )}
+
+            {/* Renderização do Conteúdo */}
+            {renderContent()}
+          </section>
+
         </main>
-
-        {/* 3. MOBILE BOTTOM NAVIGATION (Solo visible en móviles - Estilo App Nativa) */}
-        <nav className="md:hidden bg-slate-950/95 border-t border-slate-800/80 px-2 py-2 backdrop-blur-md shrink-0">
-          <div className="flex justify-around items-center">
-            {tabs.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setTab(id)}
-                className={`flex flex-col items-center gap-1.5 rounded-xl py-1.5 px-3 text-center transition-all ${
-                  tab === id ? 'text-teal-400 font-bold bg-slate-900' : 'text-slate-400 font-medium'
-                }`}
-              >
-                <Icon size={18} className={tab === id ? 'text-teal-400' : 'text-slate-500'} />
-                <span className="text-[10px] tracking-tight">{label}</span>
-              </button>
-            ))}
-          </div>
-        </nav>
-
-        {/* Footer Alert integrated at the very bottom right */}
-        <footer className={`absolute bottom-3 right-6 hidden lg:block text-[11px] font-medium tracking-wide transition-all duration-300 ${
-          reviewPulse ? 'text-emerald-400 animate-bounce' : 'text-slate-500'
-        }`}>
-          {reviewPulse ? `✨ ${t.reviewThanks}` : t.footerText}
-        </footer>
       </div>
 
-    </div>
-  );
-}
+      {/* Navegação Inferior Mobile - Estilo App Nativa (Só visível em telas pequenas) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-t border-teal-900/30 flex justify-around items-center py-1.5 px-2">
+        {tabsData.map((tab) => (
+          <button 
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex flex-col items-center gap-0.5 rounded-xl py-1.5 px-3 text-[9px] font-bold transition-all cursor-pointer border-none outline-none ${
+              activeTab === tab.id ? 'text-teal-400 bg-slate-800/70 scale-105' : 'text-slate-500 hover:text-slate-200 active:scale-95'
+            }`}
+          >
+            <span className="text-base">{tab.icon}</span>
+            {tab.label}
+          </button>
+        ))}
+      </nav>
 
-export type { Translation, Lang };
+      {/* Modais */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
+  );
+};
+
+export default App;
