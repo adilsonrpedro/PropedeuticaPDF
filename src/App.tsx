@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Mic, AudioLines, Info, Globe, Sparkles } from 'lucide-react';
+import { FileText, Mic, AudioLines, Info, Sparkles } from 'lucide-react';
 import { getTranslation, type Lang, type Translation } from './lib/i18n';
 import PdfTab from './components/PdfTab';
 import SpeechTab from './components/SpeechTab';
