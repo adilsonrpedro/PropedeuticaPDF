@@ -4,7 +4,6 @@ import { ConvertSection } from './components/ConvertSection';
 import { SplitSection } from './components/SplitSection';
 import { OcrTab } from './components/OcrTab';
 import { TranscriptionTab } from './components/TranscriptionTab';
-import './App.css';
 
 interface AppProps {
   t: Translation;
