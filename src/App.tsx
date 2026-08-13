@@ -1,9 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import Home from './components/Home';
-import ConvertSection from './components/ConvertSection';
 import { ArrowLeft } from 'lucide-react';
 
+// Importações estáticas levíssimas para a Home carregar instantaneamente
 export type ScreenType = 'home' | 'unir' | 'split' | 'compress' | 'ocr' | 'transcription';
+
+// Lazy loading das ferramentas secundárias pesadas
+const ConvertSection = lazy(() => import('./components/ConvertSection'));
+const OcrTab = lazy(() => import('./components/OcrTab'));
+const TranscriptionTab = lazy(() => import('./components/TranscriptionTab'));
+
+// Componente visual do Spinner de Carregamento
+const LoadingSpinner: React.FC = () => (
+  <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4 px-4">
+    <div className="relative flex items-center justify-center">
+      <div className="w-12 h-12 rounded-full border-4 border-teal-100 dark:border-teal-950 animate-pulse" />
+      <div className="absolute w-12 h-12 rounded-full border-4 border-teal-600 border-t-transparent animate-spin" />
+    </div>
+    <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 animate-pulse">
+      Carregando ferramenta...
+    </p>
+  </div>
+);
 
 export const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('home');
@@ -21,7 +39,23 @@ export const App: React.FC = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'unir':
-        return <ConvertSection t={t} />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ConvertSection t={t} />
+          </Suspense>
+        );
+      case 'ocr':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <OcrTab t={t} />
+          </Suspense>
+        );
+      case 'transcription':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <TranscriptionTab t={t} />
+          </Suspense>
+        );
       case 'split':
         return (
           <div className="text-center py-20 max-w-2xl mx-auto px-4">
@@ -33,20 +67,6 @@ export const App: React.FC = () => {
         return (
           <div className="text-center py-20 max-w-2xl mx-auto px-4">
             <h2 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Comprimir PDF</h2>
-            <p className="text-slate-600 dark:text-slate-400">Ferramenta em desenvolvimento...</p>
-          </div>
-        );
-      case 'ocr':
-        return (
-          <div className="text-center py-20 max-w-2xl mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">OCR (Texto de PDF)</h2>
-            <p className="text-slate-600 dark:text-slate-400">Ferramenta em desenvolvimento...</p>
-          </div>
-        );
-      case 'transcription':
-        return (
-          <div className="text-center py-20 max-w-2xl mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Transcrição de Áudio</h2>
             <p className="text-slate-600 dark:text-slate-400">Ferramenta em desenvolvimento...</p>
           </div>
         );
