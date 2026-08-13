@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="es">
   <head>
+    <script>
+  window.onerror = function(message, source, lineno, colno, error) {
+    alert("CRASH DETECTADO:\n" + message + "\n\nEn: " + source + "\nLínea: " + lineno);
+    return false;
+  };
+</script>
     <script src="https://jsdelivr.net"></script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/file_00000000e560820eaf798f5139d704c9.png" />
