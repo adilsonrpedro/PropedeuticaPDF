@@ -10,7 +10,7 @@ import {
   Instagram,
   Github,
   Linkedin,
-  ExternalLink,
+  ArrowRight,
   Sparkles
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -24,7 +24,12 @@ interface Avaliacao {
   created_at: string;
 }
 
-export const Home: React.FC = () => {
+interface HomeProps {
+  onNavigate?: (screen: string) => void;
+  t?: any;
+}
+
+export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -51,8 +56,10 @@ export const Home: React.FC = () => {
     fetchAvaliacoes();
   }, []);
 
-  const openTool = (path: string) => {
-    window.open(path, '_blank', 'noopener,noreferrer');
+  const handleToolClick = (screenId: string) => {
+    if (onNavigate) {
+      onNavigate(screenId);
+    }
   };
 
   // Cálculos de métricas das avaliações
@@ -77,7 +84,7 @@ export const Home: React.FC = () => {
       title: 'Unir PDF',
       description: 'Combine múltiplos arquivos PDF em um único documento organizado.',
       icon: FileText,
-      path: '/unir-pdf',
+      screenId: 'unir',
       badge: 'Popular'
     },
     {
@@ -85,28 +92,28 @@ export const Home: React.FC = () => {
       title: 'Dividir PDF',
       description: 'Separe páginas ou extraia trechos específicos do seu PDF.',
       icon: Scissors,
-      path: '/dividir-pdf'
+      screenId: 'split'
     },
     {
       id: 'comprimir',
       title: 'Comprimir PDF',
       description: 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
       icon: FileArchive,
-      path: '/comprimir-pdf'
+      screenId: 'compress'
     },
     {
       id: 'ocr',
       title: 'OCR (Texto de PDF)',
       description: 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
       icon: ScanText,
-      path: '/ocr'
+      screenId: 'ocr'
     },
     {
       id: 'transcricao',
       title: 'Transcrição de Áudio',
       description: 'Converta suas gravações de voz e áudios em texto rapidamente.',
       icon: Headphones,
-      path: '/transcricao'
+      screenId: 'transcription'
     }
   ];
 
@@ -144,7 +151,7 @@ export const Home: React.FC = () => {
               Ferramentas Disponíveis
             </h2>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Abrem em nova aba
+              Navegação direta no aplicativo
             </span>
           </div>
 
@@ -154,7 +161,7 @@ export const Home: React.FC = () => {
               return (
                 <button
                   key={tool.id}
-                  onClick={() => openTool(tool.path)}
+                  onClick={() => handleToolClick(tool.screenId)}
                   className="group relative text-left bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-xl hover:border-teal-500/50 dark:hover:border-teal-500/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
                 >
                   {tool.badge && (
@@ -168,14 +175,14 @@ export const Home: React.FC = () => {
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors flex items-center gap-1.5">
                       {tool.title}
-                      <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-teal-500" />
                     </h3>
                     <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                       {tool.description}
                     </p>
                   </div>
-                  <div className="mt-6 text-xs font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1">
-                    Abrir ferramenta &rarr;
+                  <div className="mt-6 text-xs font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span>Acessar ferramenta</span>
+                    <ArrowRight className="w-4 h-4" />
                   </div>
                 </button>
               );
