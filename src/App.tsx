@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import DropZone from './components/DropZone';
-import { ConvertSection } from './components/ConvertSection';
-import { OcrTab } from './components/OcrTab';
-import { TranscriptionTab } from './components/TranscriptionTab';
-import { Translation } from './lib/i18n';
+import ConvertSection from './components/ConvertSection';
+import OcrTab from './components/OcrTab';
+import TranscriptionTab from './components/TranscriptionTab';
+import Translation from './lib/i18n';
 
 interface AppProps {
   t: Translation;
