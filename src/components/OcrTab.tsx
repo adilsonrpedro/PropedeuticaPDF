@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import { Loader as Loader2, ScanText, Copy, Check, Download, Search, CircleAlert as AlertCircle, FileSearch } from 'lucide-react';
+import { Loader as Loader2, ScanText, Copy, Check, Download, CircleAlert as AlertCircle } from 'lucide-react';
 import DropZone from './DropZone';
 import ReviewForm from './ReviewForm';
 import { applyWatermarkToPdfDoc } from '../lib/watermark';
-import type { Translation } from '../lib/i18n';
 import { saveAs } from 'file-saver';
 
 interface OcrTabProps {
-  t: Translation;
+  t?: any;
   onReviewSubmitted?: () => void;
 }
 
@@ -29,6 +28,14 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const [showReview, setShowReview] = useState(false);
+
+  // Função interna de segurança para evitar quebras por falta de strings de tradução
+  const safeStr = (key: string, fallback: string): string => {
+    if (t && typeof t === 'object' && key in t) {
+      return t[key] || fallback;
+    }
+    return fallback;
+  };
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(ocrText);
@@ -60,7 +67,10 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
       const Tesseract = await import('tesseract.js');
       const worker = await Tesseract.createWorker(lang, 1, {
         logger: (m: { status: string; progress: number }) => {
-          if (m.status === 'recognizing text') { setProgress(Math.round(m.progress * 100)); setStatusLabel(t.ocrRecognizing); }
+          if (m.status === 'recognizing text') { 
+            setProgress(Math.round(m.progress * 100)); 
+            setStatusLabel(safeStr('ocrRecognizing', 'Reconhecendo texto...')); 
+          }
         },
       });
 
@@ -72,14 +82,14 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
         for (let i = 1; i <= pdf.numPages; i++) {
           const canvas = await renderPage(pdf, i);
           const blob: Blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.9));
-          setStatusLabel(`${t.ocrRecognizing} ${i}/${pdf.numPages}`);
+          setStatusLabel(`${safeStr('ocrRecognizing', 'Reconhecendo texto...')} ${i}/${pdf.numPages}`);
           const { data } = await worker.recognize(blob as unknown as import('tesseract.js').ImageLike);
           fullText += data.text + '\n\n';
           setProgress(Math.round((i / pdf.numPages) * 100));
         }
         setOcrText(fullText.trim());
       } else {
-        setStatusLabel(t.ocrRecognizing);
+        setStatusLabel(safeStr('ocrRecognizing', 'Reconhecendo texto...'));
         const { data } = await worker.recognize(file as unknown as import('tesseract.js').ImageLike);
         setOcrText(data.text);
         setProgress(100);
@@ -87,7 +97,7 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
       await worker.terminate();
       setShowReview(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t.convError);
+      setError(e instanceof Error ? e.message : safeStr('convError', 'Erro na conversão.'));
     } finally {
       setBusy('idle');
     }
@@ -117,7 +127,7 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
         const canvas = await renderPage(pdf, i);
         const jpegBlob: Blob = await new Promise((resolve) => canvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.85));
         const jpegBuf = await jpegBlob.arrayBuffer();
-        setStatusLabel(`${t.ocrRecognizing} ${i}/${pdf.numPages}`);
+        setStatusLabel(`${safeStr('ocrRecognizing', 'Reconhecendo texto...')} ${i}/${pdf.numPages}`);
 
         const { data } = await worker.recognize(jpegBlob as unknown as import('tesseract.js').ImageLike);
         const img = await pdfDoc.embedJpg(jpegBuf);
@@ -138,7 +148,7 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
       setSearchablePdf(await pdfDoc.save() as unknown as ArrayBuffer);
       setShowReview(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t.convError);
+      setError(e instanceof Error ? e.message : safeStr('convError', 'Erro na conversão.'));
     } finally {
       setBusy('idle');
     }
@@ -160,16 +170,26 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6">
       <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{t.ocrTitle}</h2>
-        <p className="mt-2 text-sm text-slate-500">{t.ocrSubtitle}</p>
+        <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{safeStr('ocrTitle', 'Reconhecimento de Texto (OCR)')}</h2>
+        <p className="mt-2 text-sm text-slate-500">{safeStr('ocrSubtitle', 'Extraia texto de imagens ou transforme PDFs digitalizados em pesquisáveis.')}</p>
       </div>
 
-      <DropZone onFile={setFile} title={t.ocrDropTitle} subtitle={t.ocrDropSubtitle} accept=".jpeg,.jpg,.png,.pdf" hasItems={!!file} accent="teal" />
+      <DropZone 
+        onFile={setFile} 
+        title={safeStr('ocrDropTitle', 'Escolha uma imagem ou arquivo PDF')} 
+        subtitle={safeStr('ocrDropSubtitle', 'Arraste ou clique para carregar')} 
+        accept=".jpeg,.jpg,.png,.pdf" 
+        hasItems={!!file} 
+        accent="teal" 
+      />
 
       {file && (
         <div className="mt-5 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="text-sm font-medium text-slate-700">
+            Arquivo carregado: <span className="font-mono text-xs text-teal-600">{file.name}</span>
+          </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">{t.ocrLanguage}</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700">{safeStr('ocrLanguage', 'Idioma do Documento')}</label>
             <div className="flex flex-wrap gap-2">
               {ocrLangs.map((l) => (
                 <button key={l.code} onClick={() => setLang(l.code)} className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${lang === l.code ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}>
@@ -182,65 +202,20 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
           <div className="grid gap-3 sm:grid-cols-2">
             <button onClick={handleOcr} disabled={busy !== 'idle'} className="flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 disabled:opacity-60">
               {busy === 'ocr' ? <Loader2 size={18} className="animate-spin" /> : <ScanText size={18} />}
-              {busy === 'ocr' ? t.ocrProcessing : t.ocrProcess}
+              {busy === 'ocr' ? safeStr('ocrProcessing', 'Processando...') : safeStr('ocrProcess', 'Extrair Texto Puro')}
             </button>
-            <button onClick={handleSearchablePdf} disabled={busy !== 'idle' || !file.name.toLowerCase().endsWith('.pdf')} className="flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40">
-              {busy === 'searchable' ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-              {busy === 'searchable' ? t.ocrSearchableGen : t.ocrSearchableBtn}
+            <button onClick={handleSearchablePdf} disabled={busy !== 'idle' || !file.name.toLowerCase().endsWith('.pdf')} className="flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60">
+              {busy === 'searchable' ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+              {busy === 'searchable' ? safeStr('ocrProcessing', 'Processando...') : safeStr('ocrSearchable', 'Tornar PDF Pesquisável')}
             </button>
           </div>
-
-          {file.name.toLowerCase().endsWith('.pdf') && (
-            <p className="flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
-              <FileSearch size={15} className="mt-0.5 shrink-0 text-teal-600" />
-              {t.ocrSearchableDesc}
-            </p>
-          )}
-
-          {busy !== 'idle' && (
-            <div>
-              <div className="mb-1.5 flex justify-between text-xs text-slate-500">
-                <span>{statusLabel || t.ocrProgress}</span>
-                <span>{progress}%</span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-                <div className="h-full rounded-full bg-gradient-to-r from-teal-500 to-blue-500 transition-all duration-300" style={{ width: `${progress}%` }} />
-              </div>
-            </div>
-          )}
-
-          {searchablePdf && (
-            <div className="flex flex-col gap-3 rounded-xl bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm font-medium text-emerald-800">{t.ocrSearchable}</p>
-              <button onClick={downloadSearchablePdf} className="flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700">
-                <Download size={18} /> {t.ocrDownloadPdf}
-              </button>
-            </div>
-          )}
-
-          {ocrText && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-slate-700">{t.ocrResult}</label>
-                <button onClick={handleCopy} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition ${copied ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
-                  {copied ? <Check size={15} /> : <Copy size={15} />}
-                  {copied ? t.ocrCopied : t.ocrCopy}
-                </button>
-              </div>
-              <textarea value={ocrText} onChange={(e) => setOcrText(e.target.value)} placeholder={t.ocrResultPlaceholder} rows={10} className="w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm leading-relaxed text-slate-800 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-200" />
-            </div>
-          )}
-
-          {error && (
-            <div className="flex items-start gap-2 rounded-xl bg-red-50 p-4 text-sm text-red-700">
-              <AlertCircle size={18} className="mt-0.5 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {showReview && <ReviewForm t={t} onSubmitted={onReviewSubmitted} />}
         </div>
       )}
-    </div>
-  );
-}
+
+      {busy !== 'idle' && (
+        <div className="mt-6 rounded-2xl border border-teal-100 bg-teal-50 p-4 text-center">
+          <div className="text-sm font-medium text-teal-800 mb-2">{statusLabel}</div>
+          <div className="w-full bg-teal-200 h-2 rounded-full overflow-hidden">
+            <div className="bg-teal-600 h-2 transition-all duration-300" style={{ width: `${progress}%` }}></div>
+          </div>
+          <div className="text-xs text-teal-600 mt-1">{progress}%</div>
