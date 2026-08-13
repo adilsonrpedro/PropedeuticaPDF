@@ -25,11 +25,10 @@ interface Avaliacao {
 }
 
 interface HomeProps {
-  onNavigate?: (screen: string) => void;
   t?: any;
 }
 
-export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
+export const Home: React.FC<HomeProps> = ({ t }) => {
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -56,12 +55,6 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
     fetchAvaliacoes();
   }, []);
 
-  const handleToolClick = (screenId: string) => {
-    if (onNavigate) {
-      onNavigate(screenId);
-    }
-  };
-
   // Cálculos de métricas das avaliações
   const totalVotes = avaliacoes.length;
   const getRating = (a: Avaliacao) => a.nota ?? a.rating ?? 5;
@@ -84,7 +77,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
       title: 'Unir PDF',
       description: 'Combine múltiplos arquivos PDF em um único documento organizado.',
       icon: FileText,
-      screenId: 'unir',
+      href: '/unir.html',
       badge: 'Popular'
     },
     {
@@ -92,28 +85,28 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
       title: 'Dividir PDF',
       description: 'Separe páginas ou extraia trechos específicos do seu PDF.',
       icon: Scissors,
-      screenId: 'split'
+      href: '#'
     },
     {
       id: 'comprimir',
       title: 'Comprimir PDF',
       description: 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
       icon: FileArchive,
-      screenId: 'compress'
+      href: '#'
     },
     {
       id: 'ocr',
       title: 'OCR (Texto de PDF)',
       description: 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
       icon: ScanText,
-      screenId: 'ocr'
+      href: '/ocr.html'
     },
     {
       id: 'transcricao',
       title: 'Transcrição de Áudio',
       description: 'Converta suas gravações de voz e áudios em texto rapidamente.',
       icon: Headphones,
-      screenId: 'transcription'
+      href: '/transcricao.html'
     }
   ];
 
@@ -151,7 +144,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
               Ferramentas Disponíveis
             </h2>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Navegação direta no aplicativo
+              Acesso rápido e direto
             </span>
           </div>
 
@@ -159,9 +152,9 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
             {tools.map((tool) => {
               const Icon = tool.icon;
               return (
-                <button
+                <a
                   key={tool.id}
-                  onClick={() => handleToolClick(tool.screenId)}
+                  href={tool.href}
                   className="group relative text-left bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-xl hover:border-teal-500/50 dark:hover:border-teal-500/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
                 >
                   {tool.badge && (
@@ -184,7 +177,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, t }) => {
                     <span>Acessar ferramenta</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
-                </button>
+                </a>
               );
             })}
           </div>
