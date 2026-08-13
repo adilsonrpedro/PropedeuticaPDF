@@ -12,6 +12,8 @@ export default defineConfig({
         unir: resolve(__dirname, 'unir.html'),
         ocr: resolve(__dirname, 'ocr.html'),
         transcricao: resolve(__dirname, 'transcricao.html'),
+        dividir: resolve(__dirname, 'dividir.html'),
+        comprimir: resolve(__dirname, 'comprimir.html'),
       },
     },
   },
