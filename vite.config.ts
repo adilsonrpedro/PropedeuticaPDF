@@ -6,9 +6,10 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react()],
   build: {
-    modulePreload: {
-      polyfill: false,
-    },
+    target: 'esnext',
+    sourcemap: false,
+    minify: 'esbuild',
+    modulePreload: false,
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
@@ -17,6 +18,16 @@ export default defineConfig({
         transcricao: resolve(__dirname, 'transcricao.html'),
         dividir: resolve(__dirname, 'dividir.html'),
         comprimir: resolve(__dirname, 'comprimir.html'),
+      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('pdf-lib') || id.includes('pdfjs-dist')) return 'vendor-pdf';
+            if (id.includes('tesseract.js')) return 'vendor-ocr';
+            if (id.includes('lucide-react')) return 'vendor-ui';
+            return 'vendor-core';
+          }
+        },
       },
     },
   },
