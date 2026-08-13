@@ -6,7 +6,9 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react()],
   build: {
-    modulePreload: false,
+    modulePreload: {
+      polyfill: false,
+    },
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
