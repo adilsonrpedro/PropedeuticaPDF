@@ -8,8 +8,6 @@ import {
   Star,
   MessageSquare,
   Instagram,
-  Github,
-  Linkedin,
   ArrowRight,
   Sparkles
 } from 'lucide-react';
@@ -28,7 +26,7 @@ interface HomeProps {
   t?: any;
 }
 
-export const Home: React.FC<HomeProps> = ({ t }) => {
+export const Home: React.FC<HomeProps> = () => {
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -55,7 +53,7 @@ export const Home: React.FC<HomeProps> = ({ t }) => {
     fetchAvaliacoes();
   }, []);
 
-  // Cálculos de métricas das avaliações
+  // Cálculos das estatísticas de avaliação
   const totalVotes = avaliacoes.length;
   const getRating = (a: Avaliacao) => a.nota ?? a.rating ?? 5;
   const getComment = (a: Avaliacao) => a.comentario ?? a.comment ?? '';
@@ -77,36 +75,36 @@ export const Home: React.FC<HomeProps> = ({ t }) => {
       title: 'Unir PDF',
       description: 'Combine múltiplos arquivos PDF em um único documento organizado.',
       icon: FileText,
-      href: '/unir.html',
+      href: '/unir',
       badge: 'Popular'
-    },
-    {
-      id: 'dividir',
-      title: 'Dividir PDF',
-      description: 'Separe páginas ou extraia trechos específicos do seu PDF.',
-      icon: Scissors,
-      href: '#'
-    },
-    {
-      id: 'comprimir',
-      title: 'Comprimir PDF',
-      description: 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
-      icon: FileArchive,
-      href: '#'
     },
     {
       id: 'ocr',
       title: 'OCR (Texto de PDF)',
       description: 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
       icon: ScanText,
-      href: '/ocr.html'
+      href: '/ocr'
     },
     {
       id: 'transcricao',
       title: 'Transcrição de Áudio',
       description: 'Converta suas gravações de voz e áudios em texto rapidamente.',
       icon: Headphones,
-      href: '/transcricao.html'
+      href: '/transcricao'
+    },
+    {
+      id: 'dividir',
+      title: 'Dividir PDF',
+      description: 'Separe páginas ou extraia trechos específicos do seu PDF.',
+      icon: Scissors,
+      href: '/dividir'
+    },
+    {
+      id: 'comprimir',
+      title: 'Comprimir PDF',
+      description: 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
+      icon: FileArchive,
+      href: '/comprimir'
     }
   ];
 
@@ -137,14 +135,14 @@ export const Home: React.FC<HomeProps> = ({ t }) => {
           </p>
         </section>
 
-        {/* Painel de Ferramentas */}
+        {/* Painel de Ferramentas Estático */}
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
               Ferramentas Disponíveis
             </h2>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Acesso rápido e direto
+              Processamento local seguro
             </span>
           </div>
 
@@ -192,7 +190,7 @@ export const Home: React.FC<HomeProps> = ({ t }) => {
                 Avaliações dos Usuários
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Feedback transparente direto do nosso banco de dados.
+                Feedback transparente enviado diretamente pelos nossos usuários.
               </p>
             </div>
             
@@ -276,49 +274,23 @@ export const Home: React.FC<HomeProps> = ({ t }) => {
             )}
           </div>
         </section>
-
-        {/* Redes Sociais e Divulgação */}
-        <section className="bg-gradient-to-br from-teal-800 to-slate-900 text-white rounded-3xl p-8 text-center space-y-6 shadow-lg">
-          <h2 className="text-2xl font-bold">Conecte-se com a Plataforma</h2>
-          <p className="text-sm text-teal-100 max-w-lg mx-auto">
-            Acompanhe atualizações, envie sugestões e fique por dentro das novas ferramentas lançadas no PropedeuticaPDF.
-          </p>
-
-          <div className="flex justify-center items-center gap-4 pt-2">
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-              title="Instagram"
-            >
-              <Instagram className="w-5 h-5 text-white" />
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-              title="GitHub"
-            >
-              <Github className="w-5 h-5 text-white" />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-              title="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5 text-white" />
-            </a>
-          </div>
-        </section>
       </main>
 
-      {/* Rodapé simples */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-        PropedeuticaPDF &copy; {new Date().getFullYear()} - Processamento local e seguro.
+      {/* Rodapé com Instagram Oficial */}
+      <footer className="border-t border-slate-200 dark:border-slate-800 py-8 mt-16 bg-white dark:bg-slate-900 text-center text-xs text-slate-500 dark:text-slate-400 space-y-4">
+        <div className="flex justify-center items-center gap-2">
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 rounded-full font-medium transition-colors"
+            title="Instagram Oficial"
+          >
+            <Instagram className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <span>Siga-nos no Instagram</span>
+          </a>
+        </div>
+        <p>PropedeuticaPDF &copy; {new Date().getFullYear()} - Processamento 100% local e seguro.</p>
       </footer>
     </div>
   );
