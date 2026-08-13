@@ -29,7 +29,6 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
   const [error, setError] = useState('');
   const [showReview, setShowReview] = useState(false);
 
-  // Função interna de segurança para evitar quebras por falta de strings de tradução
   const safeStr = (key: string, fallback: string): string => {
     if (t && typeof t === 'object' && key in t) {
       return t[key] || fallback;
@@ -52,7 +51,7 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
     const ctx = canvas.getContext('2d')!;
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    await page.render({ canvasContext: ctx, viewport, canvas } as unknown as Parameters<typeof page.render>[0]).promise;
+    await page.render({ canvasContext: ctx, viewport, canvas } as unknown as Parameters<typeof page.render>).promise;
     return canvas;
   };
 
@@ -219,3 +218,7 @@ export default function OcrTab({ t, onReviewSubmitted }: OcrTabProps) {
             <div className="bg-teal-600 h-2 transition-all duration-300" style={{ width: `${progress}%` }}></div>
           </div>
           <div className="text-xs text-teal-600 mt-1">{progress}%</div>
+        </div>
+      )}
+
+      {error && (
