@@ -126,7 +126,7 @@ export const Home: React.FC<HomeProps> = () => {
           <div className="flex flex-col md:flex-row items-center justify-center relative">
             
         {/* Logo isolada no canto esquerdo da tela */}
-        <div className="md:absolute md:left-4 md:top-6 flex items-center justify-center md:justify-start mb-6 md:mb-0 z-10">
+        <div className="md:absolute md:left-0 md:top-6 flex items-center justify-center md:justify-start mb-6 md:mb-0 z-10">
           <img
             src="/logo.png"
             alt="Logo PropedeuticaPDF"
