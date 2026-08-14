@@ -119,23 +119,23 @@ export const Home: React.FC<HomeProps> = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col justify-between font-sans">
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full space-y-16">
         
-        {/* Banner Hero Simétrico */}
-        <section className="relative w-full">
-          <div className="flex flex-col md:flex-row items-center justify-center relative">
+        {/* Banner Header em Grid 3 Colunas (Simétrico e Responsivo) */}
+        <section className="w-full pt-4 sm:pt-6">
+          <div className="flex flex-col items-center text-center md:grid md:grid-cols-3 md:items-center md:gap-4 w-full">
             
-        {/* Logo isolada no canto esquerdo da tela */}
-        <div className="md:absolute md:left-0 md:top-6 flex items-center justify-center md:justify-start mb-6 md:mb-0 z-10">
-          <img
-            src="/logo.png"
-            alt="Logo PropedeuticaPDF"
-            className="h-56 landscape:h-36 sm:h-56 md:h-64 w-auto object-contain pt-2"
-          />
-        </div>
+            {/* Coluna 1: Logo à Esquerda */}
+            <div className="flex justify-center md:justify-start items-center mb-6 md:mb-0 w-full">
+              <img
+                src="/logo.svg"
+                alt="Logo PropedeuticaPDF"
+                className="h-28 md:h-48 lg:h-56 w-auto object-contain flex-shrink-0 pt-2 md:pt-4"
+              />
+            </div>
 
-            {/* Conteúdo do título e descrição centralizados */}
-            <div className="text-center space-y-4 max-w-3xl mx-auto">
+            {/* Coluna 2: Textos Centralizados */}
+            <div className="flex flex-col items-center text-center col-span-1 space-y-4 w-full">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide">
                 <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 Suíte Completa de Ferramentas PDF & IA
@@ -151,6 +151,9 @@ export const Home: React.FC<HomeProps> = () => {
                 Escolha uma das ferramentas abaixo para começar.
               </p>
             </div>
+
+            {/* Coluna 3: Balanço de Grid para simetria no desktop */}
+            <div className="w-full hidden md:block"></div>
 
           </div>
         </section>
