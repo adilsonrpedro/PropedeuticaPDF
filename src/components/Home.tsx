@@ -128,7 +128,7 @@ export const Home: React.FC<HomeProps> = () => {
             {/* Coluna 1: Logo à Esquerda */}
             <div className="flex justify-center md:justify-start items-center mb-6 md:mb-0 w-full">
               <img
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Logo PropedeuticaPDF"
                 className="h-28 md:h-48 lg:h-56 w-auto object-contain flex-shrink-0 pt-2 md:pt-4"
               />
