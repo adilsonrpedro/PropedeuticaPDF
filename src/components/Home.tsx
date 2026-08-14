@@ -128,8 +128,8 @@ export const Home: React.FC<HomeProps> = () => {
             Suíte Completa de Ferramentas PDF & IA
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-3">
-            <img src="/logo.png" alt="Logo PropedeuticaPDF" className="h-8 sm:h-10 w-auto object-contain" />
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
+            <img src="/logo.svg" alt="Logo PropedeuticaPDF" className="h-8 w-auto object-contain" />
             <span>Propedeutica<span className="text-teal-600 dark:text-teal-400">PDF</span></span>
           </h1>
 
@@ -283,7 +283,7 @@ export const Home: React.FC<HomeProps> = () => {
       <footer className="border-t border-slate-200 dark:border-slate-800 py-8 mt-16 bg-white dark:bg-slate-900 text-center text-xs text-slate-500 dark:text-slate-400 space-y-4">
         <div className="flex justify-center items-center gap-2">
           <a
-            href="https://www.instagram.com/propedeuticaemfoco"
+            href="https://instagram.com"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 rounded-full font-medium transition-colors"
