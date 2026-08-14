@@ -125,14 +125,14 @@ export const Home: React.FC<HomeProps> = () => {
         <section className="relative w-full">
           <div className="flex flex-col md:flex-row items-center justify-center relative">
             
-            {/* Logo isolada no canto esquerdo da tela */}
-            <div className="md:absolute md:left-0 flex items-center justify-center md:justify-start mb-6 md:mb--6">
-              <img
-                src="/logo.png"
-                alt="Logo PropedeuticaPDF"
-                className="h-56 sm:h-64 w-auto object-contain"
-              />
-            </div>
+        {/* Logo isolada no canto esquerdo da tela */}
+        <div className="md:absolute md:left-4 md:top-6 flex items-center justify-center md:justify-start mb-6 md:mb-0 z-10">
+          <img
+            src="/logo.png"
+            alt="Logo PropedeuticaPDF"
+            className="h-44 landscape:h-36 sm:h-52 md:h-56 w-auto object-contain pt-2"
+          />
+        </div>
 
             {/* Conteúdo do título e descrição centralizados */}
             <div className="text-center space-y-4 max-w-3xl mx-auto">
