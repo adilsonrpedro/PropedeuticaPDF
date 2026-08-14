@@ -130,7 +130,7 @@ export const Home: React.FC<HomeProps> = () => {
               <img
                 src="/logo.png"
                 alt="Logo PropedeuticaPDF"
-                className="h-46 sm:h-50 w-auto object-contain"
+                className="h-41 sm:h-45 w-auto object-contain"
               />
             </div>
 
