@@ -128,7 +128,7 @@ export const Home: React.FC<HomeProps> = () => {
             {/* Logo isolada no canto esquerdo da tela */}
             <div className="md:absolute md:left-0 flex items-center justify-center md:justify-start mb-6 md:mb-0">
               <img
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Logo PropedeuticaPDF"
                 className="h-24 sm:h-28 w-auto object-contain"
               />
