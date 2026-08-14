@@ -129,7 +129,7 @@ export const Home: React.FC<HomeProps> = () => {
           </div>
 
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
-            <img src="/logo.svg" alt="Logo PropedeuticaPDF" className="h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="Logo PropedeuticaPDF" className="h-8 w-auto object-contain" />
             <span>Propedeutica<span className="text-teal-600 dark:text-teal-400">PDF</span></span>
           </h1>
 
