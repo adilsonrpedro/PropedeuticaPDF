@@ -121,21 +121,38 @@ export const Home: React.FC<HomeProps> = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col justify-between font-sans">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-16">
         
-        {/* Banner Hero */}
-        <section className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide">
-            <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-            Suíte Completa de Ferramentas PDF & IA
+        {/* Banner Hero Simétrico */}
+        <section className="relative w-full">
+          <div className="flex flex-col md:flex-row items-center justify-center relative">
+            
+            {/* Logo isolada no canto esquerdo da tela */}
+            <div className="md:absolute md:left-0 flex items-center justify-center md:justify-start mb-6 md:mb-0">
+              <img
+                src="/logo.svg"
+                alt="Logo PropedeuticaPDF"
+                className="h-24 sm:h-28 w-auto object-contain"
+              />
+            </div>
+
+            {/* Conteúdo do título e descrição centralizados */}
+            <div className="text-center space-y-4 max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide">
+                <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                Suíte Completa de Ferramentas PDF & IA
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                Propedeutica<span className="text-teal-600 dark:text-teal-400">PDF</span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                Processamento rápido, seguro e no seu próprio navegador.
+                <br />
+                Escolha uma das ferramentas abaixo para começar.
+              </p>
+            </div>
+
           </div>
-
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
-            <img src="/logo.png" alt="Logo PropedeuticaPDF" className="h-8 w-auto object-contain" />
-            <span>Propedeutica<span className="text-teal-600 dark:text-teal-400">PDF</span></span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-            Processamento rápido, seguro e no seu próprio navegador. Escolha uma das ferramentas abaixo para começar.
-          </p>
         </section>
 
         {/* Painel de Ferramentas Estático */}
