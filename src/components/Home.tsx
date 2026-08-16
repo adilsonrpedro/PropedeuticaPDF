@@ -22,7 +22,8 @@ interface Avaliacao {
   rating?: number;
   comentario?: string;
   comment?: string;
-  created_at: string;
+  criado_em?: string;
+  created_at?: string;
 }
 
 interface HomeProps {
@@ -52,7 +53,7 @@ export const Home: React.FC<HomeProps> = () => {
         const { data, error } = await supabase
           .from('avaliacoes')
           .select('*')
-          .order('created_at', { ascending: false });
+          .order('criado_em', { ascending: false });
 
         if (error) {
           console.error('Erro ao buscar avaliações do Supabase:', error);
@@ -69,13 +70,14 @@ export const Home: React.FC<HomeProps> = () => {
     fetchAvaliacoes();
   }, []);
 
-  // Cálculos das estatísticas de avaliação
+  // Cálculos das estatísticas de avaliação com proteção contra divisão por zero (0.0)
   const totalVotes = avaliacoes.length;
-  const getRating = (a: Avaliacao) => a.nota ?? a.rating ?? 5;
+  const getRating = (a: Avaliacao) => a.nota ?? a.rating ?? 0;
   const getComment = (a: Avaliacao) => a.comentario ?? a.comment ?? '';
+  const getDate = (a: Avaliacao) => a.criado_em ?? a.created_at ?? '';
 
   const totalSum = avaliacoes.reduce((acc, curr) => acc + getRating(curr), 0);
-  const averageRating = totalVotes > 0 ? (totalSum / totalVotes).toFixed(1) : '5.0';
+  const averageRating = totalVotes > 0 ? (totalSum / totalVotes).toFixed(1) : '0.0';
 
   const distribution = [5, 4, 3, 2, 1].map((star) => {
     const count = avaliacoes.filter((a) => Math.round(getRating(a)) === star).length;
@@ -258,7 +260,7 @@ export const Home: React.FC<HomeProps> = () => {
               </p>
             </div>
             
-            {/* Média Geral */}
+            {/* Média Geral com proteção contra 0.0 */}
             <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
               <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
                 {averageRating}
@@ -330,7 +332,7 @@ export const Home: React.FC<HomeProps> = () => {
                     </p>
                     <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium">
                       <span>{t?.anonymousUser || 'Usuário Anônimo'}</span>
-                      <span>{formatDate(item.created_at)}</span>
+                      <span>{formatDate(getDate(item))}</span>
                     </div>
                   </div>
                 ))}
@@ -350,7 +352,7 @@ export const Home: React.FC<HomeProps> = () => {
       <footer className="border-t border-slate-200 dark:border-slate-800 py-8 mt-16 bg-white dark:bg-slate-900 text-center text-xs text-slate-500 dark:text-slate-400 space-y-4">
         <div className="flex justify-center items-center gap-2">
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/propedeuticaemfoco"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-200 hover:text-teal-600 dark:hover:text-teal-400 rounded-full font-medium transition-colors"
