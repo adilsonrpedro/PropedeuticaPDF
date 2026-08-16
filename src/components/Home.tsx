@@ -20,6 +20,7 @@ interface Avaliacao {
   id: string | number;
   nota?: number;
   rating?: number;
+  estrelas?: number;
   comentario?: string;
   comment?: string;
   criado_em?: string;
@@ -72,9 +73,9 @@ export const Home: React.FC<HomeProps> = () => {
     fetchAvaliacoes();
   }, []);
 
-  // Cálculos das estatísticas de avaliação com proteção contra divisão por zero (0.0)
+  // Cálculos das estatísticas de avaliação com conversão numérica segura
   const totalVotes = avaliacoes.length;
-  const getRating = (a: Avaliacao) => a.nota ?? a.rating ?? 0;
+  const getRating = (a: Avaliacao) => Number(a.estrelas ?? a.nota ?? a.rating ?? 0);
   const getComment = (a: Avaliacao) => a.comentario ?? a.comment ?? '';
   const getDate = (a: Avaliacao) => a.criado_em ?? a.created_at ?? '';
 
@@ -327,12 +328,28 @@ export const Home: React.FC<HomeProps> = () => {
                 {commentsWithText.slice(0, 6).map((item) => (
                   <div
                     key={item.id}
-                    className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700/50 flex flex-col justify-between gap-2"
+                    className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700/50 flex flex-col justify-between gap-3"
                   >
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic">
-                      "{getComment(item)}"
-                    </p>
-                    <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium">
+                    <div className="space-y-2">
+                      {/* Desenho seguro das estrelas de cada comentário individual */}
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={16}
+                            className={
+                              i < getRating(item)
+                                ? 'text-amber-400 fill-amber-400'
+                                : 'text-slate-200 dark:text-slate-700'
+                            }
+                          />
+                        ))}
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic">
+                        "{getComment(item)}"
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 dark:border-slate-800">
                       <span>{t?.anonymousUser || 'Usuário Anônimo'}</span>
                       <span>{formatDate(getDate(item))}</span>
                     </div>
