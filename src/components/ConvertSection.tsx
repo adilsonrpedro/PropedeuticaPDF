@@ -187,13 +187,16 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
     try {
       const { error } = await supabase.from('avaliacoes').insert([
         {
-          nota: rating,
-          comentario: comment.trim() || null
+          estrelas: rating,
+          comentario: comment.trim() || null,
+          ferramenta: 'unir'
         }
       ]);
 
       if (error) {
-        console.error('Erro ao registrar avaliação:', error);
+        console.error('Erro ao registrar avaliação no Supabase:', error);
+      } else {
+        console.log('Avaliação enviada com sucesso!');
       }
       setRatingSubmitted(true);
     } catch (err) {
