@@ -24,6 +24,7 @@ interface Avaliacao {
   comment?: string;
   criado_em?: string;
   created_at?: string;
+  aprovado?: boolean;
 }
 
 interface HomeProps {
@@ -53,6 +54,7 @@ export const Home: React.FC<HomeProps> = () => {
         const { data, error } = await supabase
           .from('avaliacoes')
           .select('*')
+          .eq('aprovado', true)
           .order('criado_em', { ascending: false });
 
         if (error) {
