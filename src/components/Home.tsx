@@ -152,7 +152,8 @@ export const Home: React.FC<HomeProps> = () => {
 
             {/* Coluna 2: Textos Centralizados */}
             <div className="flex flex-col items-center text-center col-span-1 space-y-4 w-full">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide whitespace-nowrap">
+              {/* Badge Verde Padronizado */}
+              <div className="h-8 py-1.5 px-4 inline-flex items-center justify-center gap-2 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide whitespace-nowrap">
                 <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0" />
                 <span>{t?.suiteTag || 'Suíte Completa de Ferramentas PDF & IA'}</span>
               </div>
@@ -168,17 +169,17 @@ export const Home: React.FC<HomeProps> = () => {
               </p>
             </div>
 
-            {/* Coluna 3: Seletor de Idiomas no Lado Direito (Alinhado ao topo com a badge) */}
-            <div className="flex justify-center md:justify-end items-center md:self-start md:pt-2 w-full mt-6 md:mt-0">
-              <div className="inline-flex items-center bg-white dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm gap-1">
-                <div className="px-2 text-slate-400">
-                  <Globe className="w-4 h-4" />
+            {/* Coluna 3: Seletor de Idiomas no Lado Direito (Alinhado Milimetricamente pelo Teto) */}
+            <div className="md:self-start flex justify-center md:justify-end items-start mt-0 pt-0 w-full">
+              <div className="h-8 px-3 inline-flex items-center justify-center bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700/80 shadow-sm gap-1">
+                <div className="px-1 text-slate-400 flex items-center justify-center">
+                  <Globe className="w-3.5 h-3.5" />
                 </div>
                 {(['pt', 'es', 'en'] as const).map((lang) => (
                   <button
                     key={lang}
                     onClick={() => handleLanguageChange(lang)}
-                    className={`px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${
+                    className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase transition-all duration-200 leading-none ${
                       idioma === lang
                         ? 'bg-teal-600 text-white shadow-sm'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
