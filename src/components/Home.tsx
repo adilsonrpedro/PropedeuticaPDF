@@ -139,7 +139,7 @@ export const Home: React.FC<HomeProps> = () => {
         
         {/* Cabeçalho em Grid de 3 Colunas (Logo | Título | Seletor de Idiomas) */}
         <section className="w-full">
-          <div className="flex flex-col items-center text-center md:grid md:grid-cols-3 md:items-center md:gap-6 w-full pt-8 px-4 sm:px-8">
+          <div className="flex flex-col items-center text-center md:grid md:grid-cols-3 md:items-start md:gap-6 w-full pt-8 px-4 sm:px-8">
             
             {/* Coluna 1: Logo à Esquerda */}
             <div className="flex justify-center md:justify-start items-center mb-6 md:mb-0 w-full">
@@ -152,9 +152,9 @@ export const Home: React.FC<HomeProps> = () => {
 
             {/* Coluna 2: Textos Centralizados */}
             <div className="flex flex-col items-center text-center col-span-1 space-y-4 w-full">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide">
-                <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                {t?.suiteTag || 'Suíte Completa de Ferramentas PDF & IA'}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide whitespace-nowrap">
+                <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0" />
+                <span>{t?.suiteTag || 'Suíte Completa de Ferramentas PDF & IA'}</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
@@ -168,8 +168,8 @@ export const Home: React.FC<HomeProps> = () => {
               </p>
             </div>
 
-            {/* Coluna 3: Seletor de Idiomas no Lado Direito */}
-            <div className="flex justify-center md:justify-end items-center w-full mt-6 md:mt-0">
+            {/* Coluna 3: Seletor de Idiomas no Lado Direito (Alinhado ao topo com a badge) */}
+            <div className="flex justify-center md:justify-end items-center md:self-start md:pt-2 w-full mt-6 md:mt-0">
               <div className="inline-flex items-center bg-white dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm gap-1">
                 <div className="px-2 text-slate-400">
                   <Globe className="w-4 h-4" />
