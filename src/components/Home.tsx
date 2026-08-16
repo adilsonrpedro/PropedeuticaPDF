@@ -9,9 +9,11 @@ import {
   MessageSquare,
   Instagram,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Globe
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { getTranslation } from '../lib/i18n';
 import AdBanner from './AdBanner';
 
 interface Avaliacao {
@@ -28,8 +30,21 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = () => {
+  // Estado global do idioma com persistência em localStorage
+  const [idioma, setIdioma] = useState<string>(() => {
+    return localStorage.getItem('propedeutica_lang') || 'pt';
+  });
+
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Obtém o dicionário de traduções ativo
+  const t = getTranslation(idioma);
+
+  const handleLanguageChange = (lang: string) => {
+    setIdioma(lang);
+    localStorage.setItem('propedeutica_lang', lang);
+  };
 
   useEffect(() => {
     const fetchAvaliacoes = async () => {
@@ -73,37 +88,37 @@ export const Home: React.FC<HomeProps> = () => {
   const tools = [
     {
       id: 'unir',
-      title: 'Unir PDF',
-      description: 'Combine múltiplos arquivos PDF em um único documento organizado.',
+      title: t?.toolUnirTitle || 'Unir PDF',
+      description: t?.toolUnirDesc || 'Combine múltiplos arquivos PDF em um único documento organizado.',
       icon: FileText,
       href: '/unir',
       badge: 'Popular'
     },
     {
       id: 'ocr',
-      title: 'OCR (Texto de PDF)',
-      description: 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
+      title: t?.toolOcrTitle || 'OCR (Texto de PDF)',
+      description: t?.toolOcrDesc || 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
       icon: ScanText,
       href: '/ocr'
     },
     {
       id: 'transcricao',
-      title: 'Transcrição de Áudio',
-      description: 'Converta suas gravações de voz e áudios em texto rapidamente.',
+      title: t?.toolTranscriptionTitle || 'Transcrição de Áudio',
+      description: t?.toolTranscriptionDesc || 'Converta suas gravações de voz e áudios em texto rapidamente.',
       icon: Headphones,
       href: '/transcricao'
     },
     {
       id: 'dividir',
-      title: 'Dividir PDF',
-      description: 'Separe páginas ou extraia trechos específicos do seu PDF.',
+      title: t?.toolSplitTitle || 'Dividir PDF',
+      description: t?.toolSplitDesc || 'Separe páginas ou extraia trechos específicos do seu PDF.',
       icon: Scissors,
       href: '/dividir'
     },
     {
       id: 'comprimir',
-      title: 'Comprimir PDF',
-      description: 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
+      title: t?.toolCompressTitle || 'Comprimir PDF',
+      description: t?.toolCompressDesc || 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
       icon: FileArchive,
       href: '/comprimir'
     }
@@ -122,11 +137,11 @@ export const Home: React.FC<HomeProps> = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col justify-between font-sans">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full space-y-12">
         
-        {/* Cabeçalho em Grid de 3 Colunas (Simétrico e Responsivo) */}
+        {/* Cabeçalho em Grid de 3 Colunas (Logo | Título | Seletor de Idiomas) */}
         <section className="w-full">
           <div className="flex flex-col items-center text-center md:grid md:grid-cols-3 md:items-center md:gap-6 w-full pt-8 px-4 sm:px-8">
             
-            {/* Coluna 1: Logo à Esquerda (Formato PNG com espaço no topo) */}
+            {/* Coluna 1: Logo à Esquerda */}
             <div className="flex justify-center md:justify-start items-center mb-6 md:mb-0 w-full">
               <img
                 src="/logo.png"
@@ -139,7 +154,7 @@ export const Home: React.FC<HomeProps> = () => {
             <div className="flex flex-col items-center text-center col-span-1 space-y-4 w-full">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 text-xs font-semibold tracking-wide">
                 <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                Suíte Completa de Ferramentas PDF & IA
+                {t?.suiteTag || 'Suíte Completa de Ferramentas PDF & IA'}
               </div>
 
               <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
@@ -147,14 +162,33 @@ export const Home: React.FC<HomeProps> = () => {
               </h1>
 
               <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-                Processamento rápido, seguro e no seu próprio navegador.
+                {t?.heroSubtitleLine1 || 'Processamento rápido, seguro e no seu próprio navegador.'}
                 <br />
-                Escolha uma das ferramentas abaixo para começar.
+                {t?.heroSubtitleLine2 || 'Escolha uma das ferramentas abaixo para começar.'}
               </p>
             </div>
 
-            {/* Coluna 3: Balanço de Grid para simetria no desktop */}
-            <div className="w-full hidden md:block"></div>
+            {/* Coluna 3: Seletor de Idiomas no Lado Direito */}
+            <div className="flex justify-center md:justify-end items-center w-full mt-6 md:mt-0">
+              <div className="inline-flex items-center bg-white dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm gap-1">
+                <div className="px-2 text-slate-400">
+                  <Globe className="w-4 h-4" />
+                </div>
+                {(['pt', 'es', 'en'] as const).map((lang) => (
+                  <button
+                    key={lang}
+                    onClick={() => handleLanguageChange(lang)}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${
+                      idioma === lang
+                        ? 'bg-teal-600 text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
 
           </div>
         </section>
@@ -168,10 +202,10 @@ export const Home: React.FC<HomeProps> = () => {
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              Ferramentas Disponíveis
+              {t?.availableTools || 'Ferramentas Disponíveis'}
             </h2>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              Processamento local seguro
+              {t?.secureLocalProcessing || 'Processamento local seguro'}
             </span>
           </div>
 
@@ -201,7 +235,7 @@ export const Home: React.FC<HomeProps> = () => {
                     </p>
                   </div>
                   <div className="mt-6 text-xs font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    <span>Acessar ferramenta</span>
+                    <span>{t?.accessTool || 'Acessar ferramenta'}</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </a>
@@ -216,10 +250,10 @@ export const Home: React.FC<HomeProps> = () => {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
-                Avaliações dos Usuários
+                {t?.userReviews || 'Avaliações dos Usuários'}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Feedback transparente enviado diretamente pelos nossos usuários.
+                {t?.userReviewsSub || 'Feedback transparente enviado diretamente pelos nossos usuários.'}
               </p>
             </div>
             
@@ -272,7 +306,7 @@ export const Home: React.FC<HomeProps> = () => {
           <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-              Comentários Recentes (Anônimos)
+              {t?.recentComments || 'Comentários Recentes (Anônimos)'}
             </h3>
 
             {loading ? (
@@ -294,7 +328,7 @@ export const Home: React.FC<HomeProps> = () => {
                       "{getComment(item)}"
                     </p>
                     <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium">
-                      <span>Usuário Anônimo</span>
+                      <span>{t?.anonymousUser || 'Usuário Anônimo'}</span>
                       <span>{formatDate(item.created_at)}</span>
                     </div>
                   </div>
@@ -322,7 +356,7 @@ export const Home: React.FC<HomeProps> = () => {
             title="Instagram Oficial"
           >
             <Instagram className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-            <span>Siga-nos no Instagram</span>
+            <span>{t?.followInstagram || 'Siga-nos no Instagram'}</span>
           </a>
         </div>
         <p>PropedeuticaPDF &copy; {new Date().getFullYear()} - Processamento 100% local e seguro.</p>
