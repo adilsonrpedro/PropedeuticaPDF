@@ -220,7 +220,7 @@ export const Home: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+      <Footer t={t} />
     </div>
   );
 };
