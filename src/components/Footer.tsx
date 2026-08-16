@@ -6,34 +6,26 @@ interface FooterProps {
 }
 
 export default function Footer({ t }: FooterProps) {
-  const [fallbackText, setFallbackText] = useState('Siga-nos no Instagram');
+  // Estado local para garantir o re-render forçado quando o idioma mudar
+  const [currentText, setCurrentText] = useState('Siga-nos no Instagram');
 
-  // Mecanismo de contingência: Caso a página esqueça de passar a propriedade 't'
   useEffect(() => {
-    if (!t) {
-      const updateLanguage = () => {
-        const lang = localStorage.getItem('language') || 'PT';
-        const texts: Record<string, string> = {
-          PT: 'Siga-nos no Instagram',
-          ES: 'Síguenos en Instagram',
-          EN: 'Follow us on Instagram'
-        };
-        setFallbackText(texts[lang] || texts.PT);
+    // 1. Tenta extrair a string traduzida baseada nas chaves prováveis do seu dicionário
+    const dynamicText = t?.followInstagram || t?.followUs || t?.instagram;
+    
+    if (dynamicText) {
+      setCurrentText(dynamicText);
+    } else {
+      // 2. Se 't' falhar ou não vir atualizado, lê e traduz direto do localStorage de forma síncrona
+      const currentLang = localStorage.getItem('language') || 'PT';
+      const fallbackDictionary: Record<string, string> = {
+        PT: 'Siga-nos no Instagram',
+        ES: 'Síguenos en Instagram',
+        EN: 'Follow us on Instagram'
       };
-
-      updateLanguage();
-      // Ouve o evento personalizado se o seu Header disparar uma mudança de idioma
-      window.addEventListener('languageChange', updateLanguage);
-      window.addEventListener('storage', updateLanguage);
-      return () => {
-        window.removeEventListener('languageChange', updateLanguage);
-        window.removeEventListener('storage', updateLanguage);
-      };
+      setCurrentText(fallbackDictionary[currentLang] || fallbackDictionary.PT);
     }
-  }, [t]);
-
-  // Tenta ler do 't' da página (testando variações de chaves comuns), senão usa a contingência
-  const instagramLabel = t?.followInstagram || t?.followUs || t?.instagram || fallbackText;
+  }, [t]); // Dispara o efeito toda vez que o objeto 't' da página sofrer mutação
 
   return (
     <footer className="border-t border-slate-200 dark:border-slate-800 py-8 mt-16 bg-white dark:bg-slate-900 text-center text-xs text-slate-500 dark:text-slate-400 space-y-4 w-full">
@@ -46,7 +38,7 @@ export default function Footer({ t }: FooterProps) {
           title="Instagram Oficial"
         >
           <Instagram className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-          <span>{instagramLabel}</span>
+          <span>{currentText}</span>
         </a>
       </div>
       <p>PropedeuticaPDF &copy; {new Date().getFullYear()} - Processamento 100% local e seguro.</p>
