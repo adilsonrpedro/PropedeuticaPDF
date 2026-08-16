@@ -179,28 +179,40 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
     setFunnelStep('thanks');
   };
 
-  // Envio da Avaliação para o Supabase (Passo 4)
+  // Envio da Avaliação para o Supabase com Alertas Detalhados de Depuração
   const handleSubmitRating = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingRating(true);
 
     try {
-      const { error } = await supabase.from('avaliacoes').insert([
+      const ratingNumber = Number(rating);
+      const commentText = comment.trim() || null;
+
+      const { data, error } = await supabase.from('avaliacoes').insert([
         {
-          estrelas: rating,
-          comentario: comment.trim() || null,
+          estrelas: ratingNumber,
+          comentario: commentText,
           ferramenta: 'unir'
         }
       ]);
 
       if (error) {
-        console.error('Erro ao registrar avaliação no Supabase:', error);
+        console.error('Erro no Supabase:', error);
+        alert(
+          'ERRO SUPABASE DETECTADO: ' +
+            error.message +
+            ' - Código: ' +
+            error.code +
+            ' - Detalhes: ' +
+            (error.details || 'Nenhum detalhe extra')
+        );
       } else {
-        console.log('Avaliação enviada com sucesso!');
+        alert('SUCESSO: Avaliação gravada no Supabase! Vá para a Home.');
+        setRatingSubmitted(true);
       }
-      setRatingSubmitted(true);
-    } catch (err) {
-      console.error('Falha na comunicação com o Supabase:', err);
+    } catch (err: any) {
+      console.error('Exceção ao enviar avaliação:', err);
+      alert('EXCEÇÃO DE CONEXÃO: ' + (err?.message || JSON.stringify(err)));
       setRatingSubmitted(true);
     } finally {
       setIsSubmittingRating(false);
