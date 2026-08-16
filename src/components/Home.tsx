@@ -91,7 +91,7 @@ export const Home: React.FC<HomeProps> = () => {
       title: t?.toolUnirTitle || 'Unir PDF',
       description: t?.toolUnirDesc || 'Combine múltiplos arquivos PDF em um único documento organizado.',
       icon: FileText,
-      href: '/unir',
+      href: '/unir.html',
       badge: 'Popular'
     },
     {
@@ -99,28 +99,28 @@ export const Home: React.FC<HomeProps> = () => {
       title: t?.toolOcrTitle || 'OCR (Texto de PDF)',
       description: t?.toolOcrDesc || 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
       icon: ScanText,
-      href: '/ocr'
+      href: '/ocr.html'
     },
     {
       id: 'transcricao',
       title: t?.toolTranscriptionTitle || 'Transcrição de Áudio',
       description: t?.toolTranscriptionDesc || 'Converta suas gravações de voz e áudios em texto rapidamente.',
       icon: Headphones,
-      href: '/transcricao'
+      href: '/transcricao.html'
     },
     {
       id: 'dividir',
       title: t?.toolSplitTitle || 'Dividir PDF',
       description: t?.toolSplitDesc || 'Separe páginas ou extraia trechos específicos do seu PDF.',
       icon: Scissors,
-      href: '/dividir'
+      href: '/dividir.html'
     },
     {
       id: 'comprimir',
       title: t?.toolCompressTitle || 'Comprimir PDF',
       description: t?.toolCompressDesc || 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
       icon: FileArchive,
-      href: '/comprimir'
+      href: '/comprimir.html'
     }
   ];
 
