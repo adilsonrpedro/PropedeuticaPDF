@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AdBanner from './AdBanner';
+import Header from './Header';
 
 type FunnelStep = 'upload' | 'loading' | 'download' | 'thanks';
 
@@ -221,10 +222,13 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col justify-between font-sans">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full space-y-8">
         
+        {/* Cabeçalho Reutilizável Global */}
+        <Header />
+
         {/* Banner de Anúncio Superior (1) */}
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center my-4">
           <AdBanner type="horizontal" />
         </div>
 
@@ -540,7 +544,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
         )}
 
         {/* Banner de Anúncio Inferior (2) */}
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center my-4">
           <AdBanner type="horizontal" />
         </div>
 
