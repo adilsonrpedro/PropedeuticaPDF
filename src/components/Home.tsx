@@ -12,6 +12,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import AdBanner from './AdBanner';
 
 interface Avaliacao {
   id: string | number;
@@ -119,18 +120,18 @@ export const Home: React.FC<HomeProps> = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col justify-between font-sans">
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full space-y-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full space-y-12">
         
-        {/* Banner Header em Grid 3 Colunas (Simétrico e Responsivo) */}
-        <section className="w-full pt-4 sm:pt-6">
-          <div className="flex flex-col items-center text-center md:grid md:grid-cols-3 md:items-center md:gap-4 w-full">
+        {/* Cabeçalho em Grid de 3 Colunas (Simétrico e Responsivo) */}
+        <section className="w-full">
+          <div className="flex flex-col items-center text-center md:grid md:grid-cols-3 md:items-center md:gap-6 w-full pt-8 px-4 sm:px-8">
             
-            {/* Coluna 1: Logo à Esquerda */}
+            {/* Coluna 1: Logo à Esquerda (Formato PNG com espaço no topo) */}
             <div className="flex justify-center md:justify-start items-center mb-6 md:mb-0 w-full">
               <img
                 src="/logo.png"
                 alt="Logo PropedeuticaPDF"
-                className="h-28 md:h-48 lg:h-56 w-auto object-contain flex-shrink-0 pt-2 md:pt-4"
+                className="h-48 lg:h-56 w-auto object-contain flex-shrink-0 pt-4"
               />
             </div>
 
@@ -157,6 +158,11 @@ export const Home: React.FC<HomeProps> = () => {
 
           </div>
         </section>
+
+        {/* Banner de Anúncio 1 (Abaixo do Cabeçalho) */}
+        <div className="w-full flex justify-center my-6">
+          <AdBanner type="horizontal" />
+        </div>
 
         {/* Painel de Ferramentas Estático */}
         <section className="space-y-6">
@@ -297,6 +303,12 @@ export const Home: React.FC<HomeProps> = () => {
             )}
           </div>
         </section>
+
+        {/* Banner de Anúncio 2 (Acima do Rodapé) */}
+        <div className="w-full flex justify-center my-6">
+          <AdBanner type="horizontal" />
+        </div>
+
       </main>
 
       {/* Rodapé com Instagram Oficial */}
