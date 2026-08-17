@@ -18,9 +18,9 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getTranslation } from '../lib/i18n';
-import AdBanner from './AdBanner';
-import { Header } from './Header';
+import Header from './Header';
 import Footer from './Footer';
+import AdBanner from './AdBanner';
 
 type FunnelStep = 'upload' | 'loading' | 'download' | 'thanks';
 

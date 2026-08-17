@@ -32,3 +32,5 @@ export default function AdBanner({ page, position }: AdBannerProps) {
     </div>
   );
 }
+export const AdBanner: React.FC<AdBannerProps> = () => { /* ... */ };
+export default AdBanner;

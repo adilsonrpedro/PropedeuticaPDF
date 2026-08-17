@@ -188,4 +188,5 @@ export function useTranslation() {
     setLanguage
   };
 }
-export default Header();
+export const Header: React.FC = () => { /* ... */ };
+export default Header;
