@@ -1,36 +1,26 @@
 import React from 'react';
 
 interface AdBannerProps {
-  page: 'home' | 'unir' | 'ocr' | 'transcricao' | 'dividir' | 'comprimir';
-  position: 'top' | 'bottom';
+  page?: string;
+  position?: string;
+  type?: string;
 }
 
-export default function AdBanner({ page, position }: AdBannerProps) {
-  // Mapeamento organizado dos IDs exclusivos do seu painel de anúncios
-  const adSlots: Record<string, { top: string; bottom: string }> = {
-    home: { top: '1001', bottom: '1002' },
-    unir: { top: '2001', bottom: '2002' },
-    ocr: { top: '3001', bottom: '3002' },
-    transcricao: { top: '4001', bottom: '4002' }
-  };
-
-  // Resgata o ID exato com base na página e posição, usando a Home como fallback
-  const currentSlot = adSlots[page]?.[position] || adSlots.home[position];
+export const AdBanner: React.FC<AdBannerProps> = ({ page = 'home', position = 'top', type }) => {
+  const displayType = type || position || 'horizontal';
 
   return (
-    <div className="w-full max-w-4xl mx-auto my-4 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center min-h-[90px]">
-      <span className="text-[9px] uppercase tracking-widest text-slate-400 mb-1 block font-bold">
-        Anúncio - {page.toUpperCase()} ({position.toUpperCase()})
-      </span>
-      
-      {/* Elemento oficial de injeção da sua rede de monetização */}
-      {/* <ins className="adsbygoogle" data-ad-slot={currentSlot} ... /> */}
-      
-      <div className="text-xs text-slate-400/80 italic text-center">
-        Espaço de Monetização [Slot ID: {currentSlot}]
+    <div className="w-full my-4 flex justify-center items-center">
+      <div className="w-full max-w-3xl min-h-[90px] p-4 bg-slate-100 dark:bg-slate-800/60 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center text-center text-xs text-slate-400 dark:text-slate-500">
+        <span className="font-semibold uppercase tracking-wider text-[10px] text-teal-600 dark:text-teal-400">
+          Espaço Publicitário ({page} - {displayType})
+        </span>
+        <span className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+          Anúncios serão exibidos aqui em produção.
+        </span>
       </div>
     </div>
   );
-}
-export const AdBanner: React.FC<AdBannerProps> = () => { /* ... */ };
+};
+
 export default AdBanner;
