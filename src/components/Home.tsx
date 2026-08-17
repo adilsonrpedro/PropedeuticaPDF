@@ -12,9 +12,9 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getTranslation } from '../lib/i18n';
-import AdBanner from './AdBanner';
-import Header from './Header';
-import Footer from './Footer';
+import AdBanner from '../components/AdBanner';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 interface Avaliacao {
   id: string | number;
@@ -29,17 +29,8 @@ interface Avaliacao {
 }
 
 export const Home: React.FC = () => {
-  const [idioma, setIdioma] = useState<string>(() => localStorage.getItem('propedeutica_lang') || 'pt');
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const t = getTranslation(idioma);
-
-  useEffect(() => {
-    const handleLangChange = () => setIdioma(localStorage.getItem('propedeutica_lang') || 'pt');
-    window.addEventListener('languageChange', handleLangChange);
-    return () => window.removeEventListener('languageChange', handleLangChange);
-  }, []);
 
   useEffect(() => {
     const fetchAvaliacoes = async () => {
@@ -53,7 +44,7 @@ export const Home: React.FC = () => {
         if (error) console.error('Erro no Supabase:', error);
         else if (data) setAvaliacoes(data);
       } catch (err) {
-        console.error('Falha de conexão com o Supabase:', err);
+        console.error('Falha na conexão com Supabase:', err);
       } finally {
         setLoading(false);
       }
@@ -78,11 +69,42 @@ export const Home: React.FC = () => {
   const commentsWithText = avaliacoes.filter((a) => getComment(a).trim().length > 0);
 
   const tools = [
-    { id: 'unir', title: t?.toolUnirTitle || 'Unir PDF', description: t?.toolUnirDesc || 'Combine múltiplos arquivos PDF em um único documento organizado.', icon: FileText, href: '/unir.html', badge: 'Popular' },
-    { id: 'ocr', title: t?.toolOcrTitle || 'OCR (Texto de PDF)', description: t?.toolOcrDesc || 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.', icon: ScanText, href: '/ocr.html' },
-    { id: 'transcricao', title: t?.toolTranscriptionTitle || 'Transcrição de Áudio', description: t?.toolTranscriptionDesc || 'Converta suas gravações de voz e áudios em texto rapidamente.', icon: Headphones, href: '/transcricao.html' },
-    { id: 'dividir', title: t?.toolSplitTitle || 'Dividir PDF', description: t?.toolSplitDesc || 'Separe páginas ou extraia trechos específicos do seu PDF.', icon: Scissors, href: '/dividir.html' },
-    { id: 'comprimir', title: t?.toolCompressTitle || 'Comprimir PDF', description: t?.toolCompressDesc || 'Reduza o tamanho do arquivo preservando a máxima qualidade.', icon: FileArchive, href: '/comprimir.html' }
+    {
+      id: 'unir',
+      title: getTranslation('tools.unirTitle', 'Unir PDF'),
+      description: getTranslation('tools.unirDesc', 'Combine múltiplos arquivos PDF em um único documento organizado.'),
+      icon: FileText,
+      href: '/unir.html',
+      badge: 'Popular'
+    },
+    {
+      id: 'ocr',
+      title: getTranslation('tools.ocrTitle', 'OCR (Texto de PDF)'),
+      description: getTranslation('tools.ocrDesc', 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.'),
+      icon: ScanText,
+      href: '/ocr.html'
+    },
+    {
+      id: 'transcricao',
+      title: getTranslation('tools.transcriptionTitle', 'Transcrição de Áudio'),
+      description: getTranslation('tools.transcriptionDesc', 'Converta suas gravações de voz e áudios em texto rapidamente.'),
+      icon: Headphones,
+      href: '/transcricao.html'
+    },
+    {
+      id: 'dividir',
+      title: getTranslation('tools.splitTitle', 'Dividir PDF'),
+      description: getTranslation('tools.splitDesc', 'Separe páginas ou extraia trechos específicos do seu PDF.'),
+      icon: Scissors,
+      href: '/dividir.html'
+    },
+    {
+      id: 'comprimir',
+      title: getTranslation('tools.compressTitle', 'Comprimir PDF'),
+      description: getTranslation('tools.compressDesc', 'Reduza o tamanho do arquivo preservando a máxima qualidade.'),
+      icon: FileArchive,
+      href: '/comprimir.html'
+    }
   ];
 
   const formatDate = (dateString: string) => {
@@ -102,10 +124,10 @@ export const Home: React.FC = () => {
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              {t?.availableTools || 'Ferramentas Disponíveis'}
+              {getTranslation('home.availableTools', 'Ferramentas Disponíveis')}
             </h2>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              {t?.secureLocalProcessing || 'Processamento local seguro'}
+              {getTranslation('home.secureLocalProcessing', 'Processamento local seguro')}
             </span>
           </div>
 
@@ -135,7 +157,7 @@ export const Home: React.FC = () => {
                     </p>
                   </div>
                   <div className="mt-6 text-xs font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    <span>{t?.accessTool || 'Acessar ferramenta'}</span>
+                    <span>{getTranslation('home.accessTool', 'Acessar ferramenta')}</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </a>
@@ -149,10 +171,10 @@ export const Home: React.FC = () => {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
-                {t?.userReviews || 'Avaliações dos Usuários'}
+                {getTranslation('home.userReviews', 'Avaliações dos Usuários')}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                {t?.userReviewsSub || 'Feedback transparente enviado diretamente pelos nossos usuários.'}
+                {getTranslation('home.userReviewsSub', 'Feedback transparente enviado diretamente pelos nossos usuários.')}
               </p>
             </div>
             <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
@@ -163,7 +185,9 @@ export const Home: React.FC = () => {
                     <Star key={s} className={`w-4 h-4 ${s <= Math.round(Number(averageRating)) ? 'fill-amber-400 text-amber-400' : 'text-slate-300 dark:text-slate-600'}`} />
                   ))}
                 </div>
-                <span className="text-xs text-slate-500 dark:text-slate-400">{totalVotes} {totalVotes === 1 ? 'voto' : 'votos no total'}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {totalVotes} {totalVotes === 1 ? 'voto' : 'votos no total'}
+                </span>
               </div>
             </div>
           </div>
@@ -185,7 +209,7 @@ export const Home: React.FC = () => {
           <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-              {t?.recentComments || 'Comentários Recentes (Anônimos)'}
+              {getTranslation('home.recentComments', 'Comentários Recentes (Anônimos)')}
             </h3>
 
             {loading ? (
@@ -205,7 +229,7 @@ export const Home: React.FC = () => {
                       <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic">"{getComment(item)}"</p>
                     </div>
                     <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span>{t?.anonymousUser || 'Usuário Anônimo'}</span>
+                      <span>{getTranslation('home.anonymousUser', 'Usuário Anônimo')}</span>
                       <span>{formatDate(getDate(item))}</span>
                     </div>
                   </div>
@@ -217,7 +241,6 @@ export const Home: React.FC = () => {
 
         <div className="w-full flex justify-center my-6">
           <AdBanner page="home" position="bottom" />
-
         </div>
       </main>
 

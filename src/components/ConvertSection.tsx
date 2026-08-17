@@ -17,17 +17,14 @@ import {
   Sparkles
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { getTranslation } from '../lib/i18n';
 import AdBanner from './AdBanner';
 import Header from './Header';
 import Footer from './Footer';
 
 type FunnelStep = 'upload' | 'loading' | 'download' | 'thanks';
 
-interface ConvertSectionProps {
-  t?: Record<string, any>;
-}
-
-export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
+export const ConvertSection: React.FC = () => {
   const [funnelStep, setFunnelStep] = useState<FunnelStep>('upload');
   const [files, setFiles] = useState<File[]>([]);
   const [mergedBytes, setMergedBytes] = useState<Uint8Array | null>(null);
@@ -49,7 +46,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
       (file) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
     );
     if (pdfFiles.length === 0) {
-      setErrorMessage('Por favor, selecione apenas arquivos em formato PDF.');
+      setErrorMessage(getTranslation('unir.onlyPdfError', 'Por favor, selecione apenas arquivos em formato PDF.'));
       return;
     }
     setFiles((prev) => [...prev, ...pdfFiles]);
@@ -103,7 +100,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
 
   const handleMergePDFs = async () => {
     if (files.length < 2) {
-      setErrorMessage('Adicione pelo menos 2 arquivos PDF para realizar a união.');
+      setErrorMessage(getTranslation('unir.minFilesError', 'Adicione pelo menos 2 arquivos PDF para realizar a união.'));
       return;
     }
     setIsProcessing(true);
@@ -121,8 +118,8 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
       setMergedBytes(pdfBytes);
       setFunnelStep('loading');
     } catch (error) {
-      console.error('Erro ao unir os arquivos PDF:', error);
-      setErrorMessage('Ocorreu um erro ao processar os PDFs. Certifique-se de que nenhum arquivo esteja protegido por senha ou corrompido.');
+      console.error('Erro ao unir PDFs:', error);
+      setErrorMessage(getTranslation('unir.processError', 'Ocorreu um erro ao processar os PDFs. Certifique-se de que nenhum arquivo esteja protegido por senha ou corrompido.'));
     } finally {
       setIsProcessing(false);
     }
@@ -195,10 +192,10 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white sm:text-4xl">
-                {t?.mergeTitle || 'Unir PDFs'}
+                {getTranslation('unir.title', 'Unir PDFs')}
               </h1>
               <p className="text-slate-600 dark:text-slate-300">
-                {t?.mergeSubtitle || 'Combine vários arquivos PDF em um único documento em segundos.'}
+                {getTranslation('unir.subtitle', 'Combine vários arquivos PDF em um único documento em segundos.')}
               </p>
             </div>
 
@@ -227,17 +224,26 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
                   <Upload className="w-8 h-8" />
                 </div>
                 <div className="text-slate-700 dark:text-slate-200">
-                  <span className="font-semibold text-teal-600 dark:text-teal-400 hover:underline">Clique para selecionar</span> ou arraste seus PDFs aqui
+                  <span className="font-semibold text-teal-600 dark:text-teal-400 hover:underline">
+                    {getTranslation('unir.clickSelect', 'Clique para selecionar')}
+                  </span>{' '}
+                  {getTranslation('unir.orDrag', 'ou arraste seus PDFs aqui')}
                 </div>
-                <p className="text-xs text-slate-400 dark:text-slate-500">Selecione dois ou mais arquivos para juntar</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">
+                  {getTranslation('unir.selectHint', 'Selecione dois ou mais arquivos para juntar')}
+                </p>
               </div>
             </div>
 
             {files.length > 0 && (
               <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/80 dark:bg-slate-800/80">
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Arquivos Selecionados ({files.length})</span>
-                  <button onClick={handleClearAll} className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remover todos</button>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    {getTranslation('unir.selectedFiles', 'Arquivos Selecionados')} ({files.length})
+                  </span>
+                  <button onClick={handleClearAll} className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">
+                    {getTranslation('unir.removeAll', 'Remover todos')}
+                  </button>
                 </div>
 
                 <ul className="divide-y divide-slate-100 dark:divide-slate-700 max-h-80 overflow-y-auto">
@@ -274,7 +280,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
               {files.length > 0 && (
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-100 transition-colors flex items-center justify-center gap-2">
                   <Plus className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                  <span>Adicionar mais PDFs</span>
+                  <span>{getTranslation('unir.addMore', 'Adicionar mais PDFs')}</span>
                 </button>
               )}
 
@@ -289,12 +295,12 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
                 {isProcessing ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>Processando...</span>
+                    <span>{getTranslation('unir.processing', 'Processando...')}</span>
                   </>
                 ) : (
                   <>
                     <FileText className="w-5 h-5" />
-                    <span>Unir PDFs</span>
+                    <span>{getTranslation('unir.btnMerge', 'Unir PDFs')}</span>
                   </>
                 )}
               </button>
@@ -310,8 +316,12 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
               <div className="absolute w-16 h-16 rounded-full border-4 border-teal-600 border-t-transparent animate-spin" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Processando e preparando seus documentos...</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Isso levará apenas alguns segundos.</p>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                {getTranslation('unir.loadingTitle', 'Processando e preparando seus documentos...')}
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {getTranslation('unir.loadingSubtitle', 'Isso levará apenas alguns segundos.')}
+              </p>
             </div>
           </div>
         )}
@@ -324,12 +334,18 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Seu PDF Unificado está Pronto!</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Escolha o nome do seu arquivo e faça o download gratuito.</p>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                {getTranslation('unir.readyTitle', 'Seu PDF Unificado está Pronto!')}
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {getTranslation('unir.readySubtitle', 'Escolha o nome do seu arquivo e faça o download gratuito.')}
+              </p>
             </div>
 
             <div className="space-y-2 text-left max-w-md mx-auto">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Nome do arquivo de saída:</label>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {getTranslation('unir.fileNameLabel', 'Nome do arquivo de saída:')}
+              </label>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -347,7 +363,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
               className="w-full sm:w-auto px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-md transition-all active:scale-[0.98] inline-flex items-center justify-center gap-2 mx-auto"
             >
               <Download className="w-5 h-5" />
-              <span>Baixar Arquivo PDF</span>
+              <span>{getTranslation('unir.downloadBtn', 'Baixar Arquivo PDF')}</span>
             </button>
           </div>
         )}
@@ -359,13 +375,19 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
               <div className="w-14 h-14 bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 rounded-full flex items-center justify-center mx-auto">
                 <Sparkles className="w-8 h-8" />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Obrigado por usar o PropedeuticaPDF!</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">Seu download foi iniciado. Como foi sua experiência ao usar nossa ferramenta?</p>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                {getTranslation('unir.thanksTitle', 'Obrigado por usar o PropedeuticaPDF!')}
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+                {getTranslation('unir.thanksSubtitle', 'Seu download foi iniciado. Como foi sua experiência ao usar nossa ferramenta?')}
+              </p>
             </div>
 
             {!ratingSubmitted ? (
               <form onSubmit={handleSubmitRating} className="bg-slate-50 dark:bg-slate-900/60 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 text-left">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Sua Nota (1 a 5 Estrelas):</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                  {getTranslation('unir.rateLabel', 'Sua Nota (1 a 5 Estrelas):')}
+                </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -380,12 +402,14 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400">Comentário Anônimo (Opcional):</label>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400">
+                    {getTranslation('unir.commentLabel', 'Comentário Anônimo (Opcional):')}
+                  </label>
                   <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={3}
-                    placeholder="Deixe uma sugestão ou feedback..."
+                    placeholder={getTranslation('unir.commentPlaceholder', 'Deixe uma sugestão ou feedback...')}
                     className="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
                   />
                 </div>
@@ -395,19 +419,19 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
                   disabled={isSubmittingRating}
                   className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
                 >
-                  {isSubmittingRating ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Enviar Avaliação Anônima</span>}
+                  {isSubmittingRating ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>{getTranslation('unir.submitRatingBtn', 'Enviar Avaliação Anônima')}</span>}
                 </button>
               </form>
             ) : (
               <div className="p-4 bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 rounded-2xl text-teal-800 dark:text-teal-200 text-sm font-medium">
-                Sua avaliação foi registrada com sucesso! Muito obrigado.
+                {getTranslation('unir.ratingSuccess', 'Sua avaliação foi registrada com sucesso! Muito obrigado.')}
               </div>
             )}
 
             <div className="pt-2">
               <a href="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition-colors">
                 <HomeIcon className="w-4 h-4" />
-                <span>Voltar para a Página Inicial</span>
+                <span>{getTranslation('unir.backHome', 'Voltar para a Página Inicial')}</span>
               </a>
             </div>
           </div>
