@@ -187,7 +187,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
         <Header />
 
         <div className="w-full flex justify-center my-4">
-          <AdBanner type="horizontal" />
+          <AdBanner page="unir" position="top" />
         </div>
 
         {/* PASSO 1: UPLOAD DE ARQUIVOS */}
@@ -414,7 +414,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
         )}
 
         <div className="w-full flex justify-center my-4">
-          <AdBanner type="horizontal" />
+          <AdBanner page="unir" position="top" />
         </div>
       </main>
 

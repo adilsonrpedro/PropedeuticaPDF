@@ -96,7 +96,7 @@ export const Home: React.FC = () => {
         <Header />
 
         <div className="w-full flex justify-center my-6">
-          <AdBanner type="horizontal" />
+          <AdBanner page="unir" position="top" />
         </div>
 
         <section className="space-y-6">
@@ -216,7 +216,8 @@ export const Home: React.FC = () => {
         </section>
 
         <div className="w-full flex justify-center my-6">
-          <AdBanner type="horizontal" />
+          <AdBanner page="home" position="bottom" />
+
         </div>
       </main>
 
