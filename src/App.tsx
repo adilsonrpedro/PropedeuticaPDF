@@ -11,7 +11,8 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  if (route === '/unir') {
+  // Aceita /unir ou /unir.html
+  if (route.includes('unir')) {
     return <ConvertSection />;
   }
 

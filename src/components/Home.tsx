@@ -12,7 +12,7 @@ import {
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../lib/i18n';
 import AdBanner from '../components/AdBanner';
-import { Header } from '../components/Header';
+import Header from './Header';
 import Footer from '../components/Footer';
 
 interface Avaliacao {
