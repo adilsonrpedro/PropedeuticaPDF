@@ -188,4 +188,4 @@ export function useTranslation() {
     setLanguage
   };
 }
-export default Header;
+export default() Header;
