@@ -414,7 +414,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
         )}
 
         <div className="w-full flex justify-center my-4">
-          <AdBanner page="unir" position="top" />
+          <AdBanner page="unir" position="bottom" />
         </div>
       </main>
 
