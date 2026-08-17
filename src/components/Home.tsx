@@ -11,9 +11,9 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../lib/i18n';
-import AdBanner from '../components/AdBanner';
+import AdBanner from './AdBanner';
 import Header from './Header';
-import Footer from '../components/Footer';
+import Footer from './Footer';
 
 interface Avaliacao {
   id: string | number;
@@ -121,6 +121,7 @@ export const Home: React.FC = () => {
           <AdBanner page="home" position="top" />
         </div>
 
+        {/* Ferramentas */}
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -166,6 +167,7 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
+        {/* Quadro de Avaliações */}
         <section className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-700/60 pb-6">
             <div>
@@ -177,6 +179,8 @@ export const Home: React.FC = () => {
                 {t('home.userReviewsSub', 'Feedback transparente enviado diretamente pelos nossos usuários.')}
               </p>
             </div>
+            
+            {/* Média Geral Traduzível */}
             <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
               <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{averageRating}</span>
               <div>
@@ -186,7 +190,7 @@ export const Home: React.FC = () => {
                   ))}
                 </div>
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {totalVotes} {totalVotes === 1 ? 'voto' : 'votos no total'}
+                  {totalVotes} {totalVotes === 1 ? t('home.vote', 'voto no total') : t('home.votes', 'votos no total')}
                 </span>
               </div>
             </div>
@@ -206,6 +210,7 @@ export const Home: React.FC = () => {
             ))}
           </div>
 
+          {/* Comentários Traduzíveis */}
           <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-teal-600 dark:text-teal-400" />
@@ -213,9 +218,13 @@ export const Home: React.FC = () => {
             </h3>
 
             {loading ? (
-              <div className="text-center py-6 text-sm text-slate-400 animate-pulse">Carregando avaliações...</div>
+              <div className="text-center py-6 text-sm text-slate-400 animate-pulse">
+                {t('home.loadingReviews', 'Carregando avaliações...')}
+              </div>
             ) : commentsWithText.length === 0 ? (
-              <div className="text-center py-6 text-sm text-slate-400 italic">Nenhum comentário em texto registrado ainda.</div>
+              <div className="text-center py-6 text-sm text-slate-400 italic">
+                {t('home.noComments', 'Nenhum comentário em texto registrado ainda.')}
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {commentsWithText.slice(0, 6).map((item) => (
