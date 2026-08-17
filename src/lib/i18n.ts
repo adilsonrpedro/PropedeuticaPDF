@@ -50,6 +50,7 @@ const pt: TranslationKeys = {
   recentComments: 'Comentários Recentes (Anônimos)',
   anonymousUser: 'Usuário Anônimo',
   followInstagram: 'Siga-nos no Instagram',
+  localProcessing: 'Processamento 100% local e seguro.',
 
   mergeTitle: 'Unir PDF',
   mergeDesc: 'Combine múltiplos arquivos PDF em um único documento organizado.',
@@ -86,6 +87,7 @@ const es: TranslationKeys = {
   recentComments: 'Comentarios Recientes (Anónimos)',
   anonymousUser: 'Usuario Anónimo',
   followInstagram: 'Síguenos en Instagram',
+  localProcessing: 'Procesamiento 100% local y seguro.',
 
   mergeTitle: 'Unir PDF',
   mergeDesc: 'Combina múltiples archivos PDF en un solo documento organizado.',
@@ -122,6 +124,7 @@ const en: TranslationKeys = {
   recentComments: 'Recent Comments (Anonymous)',
   anonymousUser: 'Anonymous User',
   followInstagram: 'Follow us on Instagram',
+  localProcessing: '100% local and secure processing.',
 
   mergeTitle: 'Merge PDF',
   mergeDesc: 'Combine multiple PDF files into a single organized document.',
@@ -156,23 +159,5 @@ export const getTranslation = (lang: string): TranslationKeys => {
   const normalizedLang = (lang || '').toLowerCase().slice(0, 2) as Language;
   return translations[normalizedLang] || translations.pt;
 };
-export const translations = {
-  PT: {
-    // ... suas outras chaves da home ...
-    followInstagram: 'Siga-nos no Instagram',
-    localProcessing: 'Processamento 100% local e seguro.',
-  },
-  ES: {
-    // ... suas outras chaves da home ...
-    followInstagram: 'Síguenos en Instagram',
-    localProcessing: 'Procesamiento 100% local y seguro.',
-  },
-  EN: {
-    // ... suas outras chaves da home ...
-    followInstagram: 'Follow us on Instagram',
-    localProcessing: '100% local and secure processing.',
-  }
-};
-
 
 export default getTranslation;
