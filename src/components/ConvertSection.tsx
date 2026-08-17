@@ -418,7 +418,7 @@ export const ConvertSection: React.FC<ConvertSectionProps> = ({ t }) => {
         </div>
       </main>
 
-      <Footer t={t} />
+      <Footer />
     </div>
   );
 };

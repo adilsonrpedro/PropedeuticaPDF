@@ -221,7 +221,7 @@ export const Home: React.FC = () => {
         </div>
       </main>
 
-      <Footer t={t} />
+      <Footer />
     </div>
   );
 };
