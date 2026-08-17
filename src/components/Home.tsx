@@ -1,4 +1,3 @@
-// src/components/Home.tsx
 import React, { useEffect, useState } from 'react';
 import {
   FileText,
@@ -11,7 +10,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { getTranslation } from '../lib/i18n';
+import { useTranslation } from '../lib/i18n';
 import AdBanner from '../components/AdBanner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -29,6 +28,7 @@ interface Avaliacao {
 }
 
 export const Home: React.FC = () => {
+  const { t } = useTranslation();
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -71,37 +71,37 @@ export const Home: React.FC = () => {
   const tools = [
     {
       id: 'unir',
-      title: getTranslation('tools.unirTitle', 'Unir PDF'),
-      description: getTranslation('tools.unirDesc', 'Combine múltiplos arquivos PDF em um único documento organizado.'),
+      title: t('tools.unirTitle', 'Unir PDF'),
+      description: t('tools.unirDesc', 'Combine múltiplos arquivos PDF em um único documento organizado.'),
       icon: FileText,
       href: '/unir.html',
       badge: 'Popular'
     },
     {
       id: 'ocr',
-      title: getTranslation('tools.ocrTitle', 'OCR (Texto de PDF)'),
-      description: getTranslation('tools.ocrDesc', 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.'),
+      title: t('tools.ocrTitle', 'OCR (Texto de PDF)'),
+      description: t('tools.ocrDesc', 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.'),
       icon: ScanText,
       href: '/ocr.html'
     },
     {
       id: 'transcricao',
-      title: getTranslation('tools.transcriptionTitle', 'Transcrição de Áudio'),
-      description: getTranslation('tools.transcriptionDesc', 'Converta suas gravações de voz e áudios em texto rapidamente.'),
+      title: t('tools.transcriptionTitle', 'Transcrição de Áudio'),
+      description: t('tools.transcriptionDesc', 'Converta suas gravações de voz e áudios em texto rapidamente.'),
       icon: Headphones,
       href: '/transcricao.html'
     },
     {
       id: 'dividir',
-      title: getTranslation('tools.splitTitle', 'Dividir PDF'),
-      description: getTranslation('tools.splitDesc', 'Separe páginas ou extraia trechos específicos do seu PDF.'),
+      title: t('tools.splitTitle', 'Dividir PDF'),
+      description: t('tools.splitDesc', 'Separe páginas ou extraia trechos específicos do seu PDF.'),
       icon: Scissors,
       href: '/dividir.html'
     },
     {
       id: 'comprimir',
-      title: getTranslation('tools.compressTitle', 'Comprimir PDF'),
-      description: getTranslation('tools.compressDesc', 'Reduza o tamanho do arquivo preservando a máxima qualidade.'),
+      title: t('tools.compressTitle', 'Comprimir PDF'),
+      description: t('tools.compressDesc', 'Reduza o tamanho do arquivo preservando a máxima qualidade.'),
       icon: FileArchive,
       href: '/comprimir.html'
     }
@@ -124,10 +124,10 @@ export const Home: React.FC = () => {
         <section className="space-y-6">
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              {getTranslation('home.availableTools', 'Ferramentas Disponíveis')}
+              {t('home.availableTools', 'Ferramentas Disponíveis')}
             </h2>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              {getTranslation('home.secureLocalProcessing', 'Processamento local seguro')}
+              {t('home.secureLocalProcessing', 'Processamento local seguro')}
             </span>
           </div>
 
@@ -157,7 +157,7 @@ export const Home: React.FC = () => {
                     </p>
                   </div>
                   <div className="mt-6 text-xs font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                    <span>{getTranslation('home.accessTool', 'Acessar ferramenta')}</span>
+                    <span>{t('home.accessTool', 'Acessar ferramenta')}</span>
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </a>
@@ -171,10 +171,10 @@ export const Home: React.FC = () => {
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
-                {getTranslation('home.userReviews', 'Avaliações dos Usuários')}
+                {t('home.userReviews', 'Avaliações dos Usuários')}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                {getTranslation('home.userReviewsSub', 'Feedback transparente enviado diretamente pelos nossos usuários.')}
+                {t('home.userReviewsSub', 'Feedback transparente enviado diretamente pelos nossos usuários.')}
               </p>
             </div>
             <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
@@ -209,7 +209,7 @@ export const Home: React.FC = () => {
           <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-              {getTranslation('home.recentComments', 'Comentários Recentes (Anônimos)')}
+              {t('home.recentComments', 'Comentários Recentes (Anônimos)')}
             </h3>
 
             {loading ? (
@@ -229,7 +229,7 @@ export const Home: React.FC = () => {
                       <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic">"{getComment(item)}"</p>
                     </div>
                     <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 dark:border-slate-800">
-                      <span>{getTranslation('home.anonymousUser', 'Usuário Anônimo')}</span>
+                      <span>{t('home.anonymousUser', 'Usuário Anônimo')}</span>
                       <span>{formatDate(getDate(item))}</span>
                     </div>
                   </div>
