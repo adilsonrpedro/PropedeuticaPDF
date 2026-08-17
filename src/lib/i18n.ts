@@ -1,190 +1,256 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  FileText,
+  Scissors,
+  FileArchive,
+  ScanText,
+  Headphones,
+  Star,
+  MessageSquare,
+  ArrowRight
+} from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useTranslation } from '../lib/i18n';
+import AdBanner from './AdBanner';
+import Header from './Header';
+import Footer from './Footer';
 
-export const STORAGE_KEY = 'language';
-
-const dictionary: Record<string, Record<string, string>> = {
-  pt: {
-    'header.suiteTag': 'Suíte Completa de Ferramentas PDF & IA',
-    'header.subtitleLine1': 'Processamento rápido, seguro e no seu próprio navegador.',
-    'header.subtitleLine2': 'Escolha uma das ferramentas abaixo para começar.',
-    'footer.followInstagram': 'Siga-nos no Instagram',
-    'footer.localProcessing': 'Processamento 100% local e seguro.',
-    'home.availableTools': 'Ferramentas Disponíveis',
-    'home.secureLocalProcessing': 'Processamento local seguro',
-    'home.accessTool': 'Acessar ferramenta',
-    'home.userReviews': 'Avaliações dos Usuários',
-    'home.userReviewsSub': 'Feedback transparente enviado diretamente pelos nossos usuários.',
-    'home.recentComments': 'Comentários Recentes (Anônimos)',
-    'home.anonymousUser': 'Usuário Anônimo',
-    'tools.unirTitle': 'Unir PDF',
-    'tools.unirDesc': 'Combine múltiplos arquivos PDF em um único documento organizado.',
-    'tools.ocrTitle': 'OCR (Texto de PDF)',
-    'tools.ocrDesc': 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.',
-    'tools.transcriptionTitle': 'Transcrição de Áudio',
-    'tools.transcriptionDesc': 'Converta suas gravações de voz e áudios em texto rapidamente.',
-    'tools.splitTitle': 'Dividir PDF',
-    'tools.splitDesc': 'Separe páginas ou extraia trechos específicos do seu PDF.',
-    'tools.compressTitle': 'Comprimir PDF',
-    'tools.compressDesc': 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
-    'unir.title': 'Unir PDFs',
-    'unir.subtitle': 'Combine vários arquivos PDF em um único documento em segundos.',
-    'unir.clickSelect': 'Clique para selecionar',
-    'unir.orDrag': 'ou arraste seus PDFs aqui',
-    'unir.selectHint': 'Selecione dois ou mais arquivos para juntar',
-    'unir.selectedFiles': 'Arquivos Selecionados',
-    'unir.removeAll': 'Remover todos',
-    'unir.addMore': 'Adicionar mais PDFs',
-    'unir.btnMerge': 'Unir PDFs',
-    'unir.processing': 'Processando...',
-    'unir.loadingTitle': 'Processando e preparando seus documentos...',
-    'unir.loadingSubtitle': 'Isso levará apenas alguns segundos.',
-    'unir.readyTitle': 'Seu PDF Unificado está Pronto!',
-    'unir.readySubtitle': 'Escolha o nome do seu arquivo e faça o download gratuito.',
-    'unir.fileNameLabel': 'Nome do arquivo de saída:',
-    'unir.downloadBtn': 'Baixar Arquivo PDF',
-    'unir.thanksTitle': 'Obrigado por usar o PropedeuticaPDF!',
-    'unir.thanksSubtitle': 'Seu download foi iniciado. Como foi sua experiência ao usar nossa ferramenta?',
-    'unir.rateLabel': 'Sua Nota (1 a 5 Estrelas):',
-    'unir.commentLabel': 'Comentário Anônimo (Opcional):',
-    'unir.commentPlaceholder': 'Deixe uma sugestão ou feedback...',
-    'unir.submitRatingBtn': 'Enviar Avaliação Anônima',
-    'unir.ratingSuccess': 'Sua avaliação foi registrada com sucesso! Muito obrigado.',
-    'unir.backHome': 'Voltar para a Página Inicial',
-    'unir.onlyPdfError': 'Por favor, selecione apenas arquivos em formato PDF.',
-    'unir.minFilesError': 'Adicione pelo menos 2 arquivos PDF para realizar a união.',
-    'unir.processError': 'Ocorreu um erro ao processar os PDFs. Certifique-se de que nenhum arquivo esteja protegido por senha ou corrompido.'
-  },
-  es: {
-    'header.suiteTag': 'Suite Completa de Herramientas PDF e IA',
-    'header.subtitleLine1': 'Procesamiento rápido, seguro y directamente en tu navegador.',
-    'header.subtitleLine2': 'Elige una de las siguientes herramientas para comenzar.',
-    'footer.followInstagram': 'Síguenos en Instagram',
-    'footer.localProcessing': 'Procesamiento 100% local y seguro.',
-    'home.availableTools': 'Herramientas Disponibles',
-    'home.secureLocalProcessing': 'Procesamiento local seguro',
-    'home.accessTool': 'Acceder a la herramienta',
-    'home.userReviews': 'Opiniones de los Usuarios',
-    'home.userReviewsSub': 'Comentarios transparentes enviados directamente por nuestros usuarios.',
-    'home.recentComments': 'Comentarios Recientes (Anónimos)',
-    'home.anonymousUser': 'Usuario Anónimo',
-    'tools.unirTitle': 'Unir PDF',
-    'tools.unirDesc': 'Combina múltiples archivos PDF en un solo documento organizado.',
-    'tools.ocrTitle': 'OCR (Texto de PDF)',
-    'tools.ocrDesc': 'Reconoce y extrae texto legible de PDFs o imágenes escaneadas.',
-    'tools.transcriptionTitle': 'Transcripción de Audio',
-    'tools.transcriptionDesc': 'Convierte tus grabaciones de voz y audio en texto rápidamente.',
-    'tools.splitTitle': 'Dividir PDF',
-    'tools.splitDesc': 'Separa páginas o extrae fragmentos específicos de tu PDF.',
-    'tools.compressTitle': 'Comprimir PDF',
-    'tools.compressDesc': 'Reduce el tamaño del archivo manteniendo la máxima calidad.',
-    'unir.title': 'Unir PDFs',
-    'unir.subtitle': 'Combina varios archivos PDF en un solo documento en segundos.',
-    'unir.clickSelect': 'Haz clic para seleccionar',
-    'unir.orDrag': 'o arrastra tus PDFs aquí',
-    'unir.selectHint': 'Selecciona dos o más archivos para unir',
-    'unir.selectedFiles': 'Archivos Seleccionados',
-    'unir.removeAll': 'Eliminar todos',
-    'unir.addMore': 'Añadir más PDFs',
-    'unir.btnMerge': 'Unir PDFs',
-    'unir.processing': 'Procesando...',
-    'unir.loadingTitle': 'Procesando y preparando tus documentos...',
-    'unir.loadingSubtitle': 'Esto tomará solo unos segundos.',
-    'unir.readyTitle': '¡Tu PDF Unificado está Listo!',
-    'unir.readySubtitle': 'Elige el nombre de tu archivo y descárgalo gratis.',
-    'unir.fileNameLabel': 'Nombre del archivo de salida:',
-    'unir.downloadBtn': 'Descargar Archivo PDF',
-    'unir.thanksTitle': '¡Gracias por usar PropedeuticaPDF!',
-    'unir.thanksSubtitle': 'Tu descarga ha comenzado. ¿Cómo fue tu experiencia usando nuestra herramienta?',
-    'unir.rateLabel': 'Tu Calificación (1 a 5 Estrellas):',
-    'unir.commentLabel': 'Comentario Anónimo (Opcional):',
-    'unir.commentPlaceholder': 'Deja una sugerencia o comentario...',
-    'unir.submitRatingBtn': 'Enviar Calificación Anónima',
-    'unir.ratingSuccess': '¡Tu calificación fue registrada con éxito! Muchas gracias.',
-    'unir.backHome': 'Volver a la Página Principal',
-    'unir.onlyPdfError': 'Por favor, selecciona solo archivos en formato PDF.',
-    'unir.minFilesError': 'Añade al menos 2 archivos PDF para realizar la unión.',
-    'unir.processError': 'Ocurrió un error al procesar los PDFs. Asegúrate de que ningún archivo esté protegido por contraseña o dañado.'
-  },
-  en: {
-    'header.suiteTag': 'Complete PDF & AI Tools Suite',
-    'header.subtitleLine1': 'Fast, secure processing directly in your browser.',
-    'header.subtitleLine2': 'Choose one of the tools below to get started.',
-    'footer.followInstagram': 'Follow us on Instagram',
-    'footer.localProcessing': '100% local and secure processing.',
-    'home.availableTools': 'Available Tools',
-    'home.secureLocalProcessing': 'Secure local processing',
-    'home.accessTool': 'Access tool',
-    'home.userReviews': 'User Reviews',
-    'home.userReviewsSub': 'Transparent feedback submitted directly by our users.',
-    'home.recentComments': 'Recent Comments (Anonymous)',
-    'home.anonymousUser': 'Anonymous User',
-    'tools.unirTitle': 'Merge PDF',
-    'tools.unirDesc': 'Combine multiple PDF files into a single organized document.',
-    'tools.ocrTitle': 'OCR (Text from PDF)',
-    'tools.ocrDesc': 'Recognize and extract readable text from PDFs or scanned images.',
-    'tools.transcriptionTitle': 'Audio Transcription',
-    'tools.transcriptionDesc': 'Convert your voice recordings and audio into text quickly.',
-    'tools.splitTitle': 'Split PDF',
-    'tools.splitDesc': 'Separate pages or extract specific sections from your PDF.',
-    'tools.compressTitle': 'Compress PDF',
-    'tools.compressDesc': 'Reduce file size while preserving maximum quality.',
-    'unir.title': 'Merge PDFs',
-    'unir.subtitle': 'Combine multiple PDF files into one document in seconds.',
-    'unir.clickSelect': 'Click to select',
-    'unir.orDrag': 'or drag your PDFs here',
-    'unir.selectHint': 'Select two or more files to merge',
-    'unir.selectedFiles': 'Selected Files',
-    'unir.removeAll': 'Remove all',
-    'unir.addMore': 'Add more PDFs',
-    'unir.btnMerge': 'Merge PDFs',
-    'unir.processing': 'Processing...',
-    'unir.loadingTitle': 'Processing and preparing your documents...',
-    'unir.loadingSubtitle': 'This will take just a few seconds.',
-    'unir.readyTitle': 'Your Merged PDF is Ready!',
-    'unir.readySubtitle': 'Choose your file name and download for free.',
-    'unir.fileNameLabel': 'Output file name:',
-    'unir.downloadBtn': 'Download PDF File',
-    'unir.thanksTitle': 'Thank you for using PropedeuticaPDF!',
-    'unir.thanksSubtitle': 'Your download has started. How was your experience using our tool?',
-    'unir.rateLabel': 'Your Rating (1 to 5 Stars):',
-    'unir.commentLabel': 'Anonymous Comment (Optional):',
-    'unir.commentPlaceholder': 'Leave a suggestion or feedback...',
-    'unir.submitRatingBtn': 'Submit Anonymous Review',
-    'unir.ratingSuccess': 'Your review was registered successfully! Thank you very much.',
-    'unir.backHome': 'Back to Home Page',
-    'unir.onlyPdfError': 'Please select PDF format files only.',
-    'unir.minFilesError': 'Add at least 2 PDF files to perform the merge.',
-    'unir.processError': 'An error occurred while processing the PDFs. Make sure no files are password-protected or corrupted.'
-  }
-};
-
-export function getTranslation(key: string, fallbackText: string = ''): string {
-  const lang = localStorage.getItem(STORAGE_KEY) || 'pt';
-  const activeDict = dictionary[lang] || dictionary.pt;
-  return activeDict[key] || fallbackText;
+interface Avaliacao {
+  id: string | number;
+  nota?: number;
+  rating?: number;
+  estrelas?: number;
+  comentario?: string;
+  comment?: string;
+  criado_em?: string;
+  created_at?: string;
+  aprovado?: boolean;
 }
 
-export function setLanguage(lang: string): void {
-  localStorage.setItem(STORAGE_KEY, lang);
-  window.dispatchEvent(new Event('languageChange'));
-}
-
-export function useTranslation() {
-  const [lang, setLangState] = useState<string>(() => localStorage.getItem(STORAGE_KEY) || 'pt');
+export const Home: React.FC = () => {
+  const { t } = useTranslation();
+  const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const handleSync = () => setLangState(localStorage.getItem(STORAGE_KEY) || 'pt');
-    window.addEventListener('languageChange', handleSync);
-    window.addEventListener('storage', handleSync);
-    return () => {
-      window.removeEventListener('languageChange', handleSync);
-      window.removeEventListener('storage', handleSync);
+    const fetchAvaliacoes = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('avaliacoes')
+          .select('*')
+          .eq('aprovado', true)
+          .order('criado_em', { ascending: false });
+
+        if (error) console.error('Erro no Supabase:', error);
+        else if (data) setAvaliacoes(data);
+      } catch (err) {
+        console.error('Falha na conexão com Supabase:', err);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchAvaliacoes();
   }, []);
 
-  return {
-    lang,
-    t: (key: string, fallbackText: string = '') => getTranslation(key, fallbackText),
-    setLanguage
+  const totalVotes = avaliacoes.length;
+  const getRating = (a: Avaliacao) => Number(a.estrelas ?? a.nota ?? a.rating ?? 0);
+  const getComment = (a: Avaliacao) => a.comentario ?? a.comment ?? '';
+  const getDate = (a: Avaliacao) => a.criado_em ?? a.created_at ?? '';
+
+  const totalSum = avaliacoes.reduce((acc, curr) => acc + getRating(curr), 0);
+  const averageRating = totalVotes > 0 ? (totalSum / totalVotes).toFixed(1) : '0.0';
+
+  const distribution = [5, 4, 3, 2, 1].map((star) => {
+    const count = avaliacoes.filter((a) => Math.round(getRating(a)) === star).length;
+    const percentage = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
+    return { star, count, percentage };
+  });
+
+  const commentsWithText = avaliacoes.filter((a) => getComment(a).trim().length > 0);
+
+  const tools = [
+    {
+      id: 'unir',
+      title: t('tools.unirTitle', 'Unir PDF'),
+      description: t('tools.unirDesc', 'Combine múltiplos arquivos PDF em um único documento organizado.'),
+      icon: FileText,
+      href: '/unir.html',
+      badge: 'Popular'
+    },
+    {
+      id: 'ocr',
+      title: t('tools.ocrTitle', 'OCR (Texto de PDF)'),
+      description: t('tools.ocrDesc', 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.'),
+      icon: ScanText,
+      href: '/ocr.html'
+    },
+    {
+      id: 'transcricao',
+      title: t('tools.transcriptionTitle', 'Transcrição de Áudio'),
+      description: t('tools.transcriptionDesc', 'Converta suas gravações de voz e áudios em texto rapidamente.'),
+      icon: Headphones,
+      href: '/transcricao.html'
+    },
+    {
+      id: 'dividir',
+      title: t('tools.splitTitle', 'Dividir PDF'),
+      description: t('tools.splitDesc', 'Separe páginas ou extraia trechos específicos do seu PDF.'),
+      icon: Scissors,
+      href: '/dividir.html'
+    },
+    {
+      id: 'comprimir',
+      title: t('tools.compressTitle', 'Comprimir PDF'),
+      description: t('tools.compressDesc', 'Reduza o tamanho do arquivo preservando a máxima qualidade.'),
+      icon: FileArchive,
+      href: '/comprimir.html'
+    }
+  ];
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    try { return new Date(dateString).toLocaleDateString('pt-BR'); } catch { return dateString; }
   };
-}
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col justify-between font-sans">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full space-y-12">
+        <Header />
+
+        <div className="w-full flex justify-center my-6">
+          <AdBanner page="home" position="top" />
+        </div>
+
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              {t('home.availableTools', 'Ferramentas Disponíveis')}
+            </h2>
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              {t('home.secureLocalProcessing', 'Processamento local seguro')}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tools.map((tool) => {
+              const Icon = tool.icon;
+              return (
+                <a
+                  key={tool.id}
+                  href={tool.href}
+                  className="group relative text-left bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-xl hover:border-teal-500/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
+                >
+                  {tool.badge && (
+                    <span className="absolute top-4 right-4 bg-teal-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full tracking-wider">
+                      {tool.badge}
+                    </span>
+                  )}
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                      {tool.title}
+                    </h3>
+                    <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      {tool.description}
+                    </p>
+                  </div>
+                  <div className="mt-6 text-xs font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span>{t('home.accessTool', 'Acessar ferramenta')}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-700/60 pb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
+                {t('home.userReviews', 'Avaliações dos Usuários')}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                {t('home.userReviewsSub', 'Feedback transparente enviado diretamente pelos nossos usuários.')}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700">
+              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{averageRating}</span>
+              <div>
+                <div className="flex text-amber-400">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`w-4 h-4 ${s <= Math.round(Number(averageRating)) ? 'fill-amber-400 text-amber-400' : 'text-slate-300 dark:text-slate-600'}`} />
+                  ))}
+                </div>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {totalVotes} {totalVotes === 1 ? t('home.vote', 'voto no total') : t('home.votes', 'votos no total')}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2 max-w-xl">
+            {distribution.map(({ star, count, percentage }) => (
+              <div key={star} className="flex items-center gap-3 text-xs sm:text-sm">
+                <span className="w-12 font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                  {star} <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                </span>
+                <div className="flex-1 h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-teal-500 rounded-full transition-all duration-500" style={{ width: `${percentage}%` }} />
+                </div>
+                <span className="w-12 text-right text-slate-500 dark:text-slate-400 font-mono">{count}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700/60">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              {t('home.recentComments', 'Comentários Recentes (Anônimos)')}
+            </h3>
+
+            {loading ? (
+              <div className="text-center py-6 text-sm text-slate-400 animate-pulse">
+                {t('home.loadingReviews', 'Carregando avaliações...')}
+              </div>
+            ) : commentsWithText.length === 0 ? (
+              <div className="text-center py-6 text-sm text-slate-400 italic">
+                {t('home.noComments', 'Nenhum comentário em texto registrado ainda.')}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {commentsWithText.slice(0, 6).map((item) => (
+                  <div key={item.id} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700/50 flex flex-col justify-between gap-3">
+                    <div className="space-y-2">
+                      <div className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={16} className={i < getRating(item) ? 'text-amber-400 fill-amber-400' : 'text-slate-200 dark:text-slate-700'} />
+                        ))}
+                      </div>
+                      <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic">"{getComment(item)}"</p>
+                    </div>
+                    <div className="flex justify-between items-center text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <span>{t('home.anonymousUser', 'Usuário Anônimo')}</span>
+                      <span>{formatDate(getDate(item))}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <div className="w-full flex justify-center my-6">
+          <AdBanner page="home" position="bottom" />
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Home;
