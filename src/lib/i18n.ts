@@ -156,5 +156,23 @@ export const getTranslation = (lang: string): TranslationKeys => {
   const normalizedLang = (lang || '').toLowerCase().slice(0, 2) as Language;
   return translations[normalizedLang] || translations.pt;
 };
+export const translations = {
+  PT: {
+    // ... suas outras chaves da home ...
+    followInstagram: 'Siga-nos no Instagram',
+    localProcessing: 'Processamento 100% local e seguro.',
+  },
+  ES: {
+    // ... suas outras chaves da home ...
+    followInstagram: 'Síguenos en Instagram',
+    localProcessing: 'Procesamiento 100% local y seguro.',
+  },
+  EN: {
+    // ... suas outras chaves da home ...
+    followInstagram: 'Follow us on Instagram',
+    localProcessing: '100% local and secure processing.',
+  }
+};
+
 
 export default getTranslation;
