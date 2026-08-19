@@ -1,3 +1,4 @@
+// src/components/OcrSection.tsx
 import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
 import {
   ScanText,
@@ -82,34 +83,29 @@ export const OcrSection: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Processamento via FormData Binário Puro (Zero Overhead de Base64)
   const handleProcessOcr = async () => {
     if (!file) return;
     setStep(2);
     setErrorMessage(null);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const base64String = (reader.result as string).split(',')[1];
-        
-        const response = await fetch('/api/ocr', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pdfBase64: base64String,
-            documentLanguage,
-            deskew
-          })
-        });
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('documentLanguage', documentLanguage);
+      formData.append('deskew', String(deskew));
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || t('ocr.errorMsg', 'Erro ao realizar OCR no arquivo.'));
+      const response = await fetch('/api/ocr', {
+        method: 'POST',
+        body: formData
+      });
 
-        setOcrResultText(data.text);
-        setPageSummary(data.summary || []);
-        setStep(3);
-      };
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || t('ocr.errorMsg', 'Erro ao realizar OCR no arquivo.'));
+
+      setOcrResultText(data.text);
+      setPageSummary(data.summary || []);
+      setStep(3);
     } catch (err: any) {
       console.error(err);
       setErrorMessage(err.message || t('ocr.errorMsg', 'Erro ao realizar OCR no arquivo.'));
@@ -162,7 +158,7 @@ export const OcrSection: React.FC = () => {
           <AdBanner page="ocr" position="top" />
         </div>
 
-        {/* PASSO 1: UPLOAD & OPÇÕES */}
+        {/* PASSO 1: UPLOAD & PREFERÊNCIAS */}
         {step === 1 && (
           <div className="space-y-6">
             <div className="text-center space-y-2">
@@ -177,19 +173,11 @@ export const OcrSection: React.FC = () => {
             {errorMessage && (
               <div className="p-4 bg-red-50 dark:bg-red-950/50 border-l-4 border-red-500 rounded-r-xl text-red-700 dark:text-red-200 text-sm flex items-center justify-between shadow-sm">
                 <span>{errorMessage}</span>
-                <button onClick={() => setErrorMessage(null)}>
-                  <X className="w-5 h-5" />
-                </button>
+                <button onClick={() => setErrorMessage(null)}><X className="w-5 h-5" /></button>
               </div>
             )}
 
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileInputChange}
-              accept=".pdf,image/*"
-              className="hidden"
-            />
+            <input type="file" ref={fileInputRef} onChange={handleFileInputChange} accept=".pdf,image/*" className="hidden" />
 
             {/* DropZone / Card do Arquivo */}
             {file ? (
@@ -199,11 +187,7 @@ export const OcrSection: React.FC = () => {
                     {file.type.startsWith('image/') ? (
                       <img src={previewUrl} alt="Miniatura" className="w-full h-full object-cover" />
                     ) : (
-                      <embed
-                        src={`${previewUrl}#page=1&view=Fit`}
-                        type="application/pdf"
-                        className="w-full h-full object-cover pointer-events-none"
-                      />
+                      <embed src={`${previewUrl}#page=1&view=Fit`} type="application/pdf" className="w-full h-full object-cover pointer-events-none" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1 text-left">
@@ -229,10 +213,7 @@ export const OcrSection: React.FC = () => {
               </div>
             ) : (
               <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDragging(true);
-                }}
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={(e) => {
                   e.preventDefault();
@@ -241,9 +222,7 @@ export const OcrSection: React.FC = () => {
                 }}
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
-                  isDragging
-                    ? 'border-teal-500 bg-teal-50/60 dark:bg-teal-950/20 scale-[1.01]'
-                    : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800'
+                  isDragging ? 'border-teal-500 bg-teal-50/60 dark:bg-teal-950/20 scale-[1.01]' : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800'
                 }`}
               >
                 <div className="flex flex-col items-center justify-center space-y-3">
@@ -316,12 +295,8 @@ export const OcrSection: React.FC = () => {
           <div className="py-20 flex flex-col items-center justify-center text-center space-y-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-8 shadow-sm">
             <RefreshCw className="w-16 h-16 text-teal-600 animate-spin" />
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">
-                {t('ocr.loadingTitle', 'Processando com Orquestrador Inteligente...')}
-              </h2>
-              <p className="text-sm text-slate-500">
-                {t('ocr.loadingSub', 'Processando páginas e aplicando inteligência artificial e failover.')}
-              </p>
+              <h2 className="text-2xl font-bold">{t('ocr.loadingTitle', 'Processando com Orquestrador Inteligente...')}</h2>
+              <p className="text-sm text-slate-500">{t('ocr.loadingSub', 'Processando páginas e aplicando inteligência artificial e failover.')}</p>
             </div>
           </div>
         )}
