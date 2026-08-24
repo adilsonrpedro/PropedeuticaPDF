@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Home from './components/Home';
 import ConvertSection from './components/ConvertSection';
 import OcrSection from './components/OcrSection';
+import ConvertUniversalSection from './components/ConvertUniversalSection';
 
 export const App: React.FC = () => {
   const [route, setRoute] = useState<string>(() => window.location.pathname);
@@ -12,17 +13,10 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Rota Unir PDF (/unir ou /unir.html)
-  if (route.includes('unir')) {
-    return <ConvertSection />;
-  }
+  if (route.includes('unir')) return <ConvertSection />;
+  if (route.includes('ocr')) return <OcrSection />;
+  if (route.includes('converter')) return <ConvertUniversalSection />;
 
-  // Rota OCR Inteligente (/ocr ou /ocr.html)
-  if (route.includes('ocr')) {
-    return <OcrSection />;
-  }
-
-  // Padrão: Página Inicial (Home)
   return <Home />;
 };
 

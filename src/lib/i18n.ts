@@ -24,7 +24,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'home.noComments': 'Nenhum comentário em texto registrado ainda.',
     'home.loadingReviews': 'Carregando avaliações...',
 
-    // Títulos e Descrições dos Cards de Ferramentas
+    // Cards de Ferramentas
     'tools.unirTitle': 'Unir PDF',
     'tools.unirDesc': 'Combine múltiplos arquivos PDF em um único documento organizado.',
     'tools.ocrTitle': 'OCR (Texto de PDF)',
@@ -35,8 +35,10 @@ const dictionary: Record<string, Record<string, string>> = {
     'tools.splitDesc': 'Separe páginas ou extraia trechos específicos do seu PDF.',
     'tools.compressTitle': 'Comprimir PDF',
     'tools.compressDesc': 'Reduza o tamanho do arquivo preservando a máxima qualidade.',
+    'tools.converterTitle': 'Converter para PDF',
+    'tools.converterDesc': 'Transforme imagens (JPG, PNG, WEBP) em PDF universais.',
 
-    // Ferramenta: Unir PDF (ConvertSection)
+    // Ferramenta: Unir PDF
     'unir.title': 'Unir PDFs',
     'unir.subtitle': 'Combine vários arquivos PDF em um único documento em segundos.',
     'unir.onlyPdfError': 'Por favor, selecione apenas arquivos em formato PDF.',
@@ -66,7 +68,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'unir.ratingSuccess': 'Sua avaliação foi registrada com sucesso! Muito obrigado.',
     'unir.backHome': 'Voltar para a Página Inicial',
 
-    // Ferramenta: OCR Inteligente (OcrSection)
+    // Ferramenta: OCR Inteligente
     'ocr.title': 'OCR Inteligente de PDF & Imagem',
     'ocr.subtitle': 'Reconheça e extraia texto legível com orquestração de IA resiliente.',
     'ocr.invalidFormat': 'Selecione um arquivo PDF ou imagem válida.',
@@ -81,7 +83,27 @@ const dictionary: Record<string, Record<string, string>> = {
     'ocr.copyBtn': 'Copiar Texto',
     'ocr.downloadTxt': 'Baixar TXT',
     'ocr.thanksTitle': 'Obrigado por utilizar o PropedeuticaPDF!',
-    'ocr.thanksSub': 'Como foi a precisão da extração do seu documento?'
+    'ocr.thanksSub': 'Como foi a precisão da extração do seu documento?',
+
+    // Ferramenta: Converter para PDF
+    'converter.title': 'Converter para PDF Universal',
+    'converter.subtitle': 'Transforme fotos e imagens em PDFs organizados com processamento local.',
+    'converter.invalidFormat': 'Selecione apenas arquivos de imagem (JPG, PNG, WEBP).',
+    'converter.clickSelect': 'Clique para selecionar imagens (JPG, PNG, WEBP)',
+    'converter.hint': 'Arraste vários arquivos para ordenar e converter',
+    'converter.filesCount': 'Imagens Carregadas',
+    'converter.addMore': 'Adicionar mais',
+    'converter.modeUnited': 'Tudo Unido em 1 PDF',
+    'converter.modeSeparate': 'PDFs Separados',
+    'converter.btnConvert': 'Converter para PDF',
+    'converter.loadingTitle': 'Convertendo arquivos em PDF...',
+    'converter.loadingSub': 'Processamento 100% local no seu navegador com custo $0.',
+    'converter.readyTitle': 'Conversão Concluída!',
+    'converter.readySub': 'Clique abaixo para baixar seu(s) arquivo(s) PDF.',
+    'converter.downloadBtn': 'Baixar Arquivo(s) PDF',
+    'converter.thanksTitle': 'Obrigado por utilizar o PropedeuticaPDF!',
+    'converter.thanksSub': 'Como foi sua experiência ao converter para PDF?',
+    'converter.errorMsg': 'Ocorreu um erro ao converter os arquivos.'
   },
   es: {
     // Cabeçalho e Rodapé
@@ -104,7 +126,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'home.noComments': 'Aún no hay comentarios de texto registrados.',
     'home.loadingReviews': 'Cargando opiniones...',
 
-    // Títulos e Descrições dos Cards de Ferramentas
+    // Cards de Ferramentas
     'tools.unirTitle': 'Unir PDF',
     'tools.unirDesc': 'Combina múltiples archivos PDF en un solo documento organizado.',
     'tools.ocrTitle': 'OCR (Texto de PDF)',
@@ -115,8 +137,10 @@ const dictionary: Record<string, Record<string, string>> = {
     'tools.splitDesc': 'Separa páginas o extrae fragmentos específicos de tu PDF.',
     'tools.compressTitle': 'Comprimir PDF',
     'tools.compressDesc': 'Reduce el tamaño del archivo manteniendo la máxima calidad.',
+    'tools.converterTitle': 'Convertir a PDF',
+    'tools.converterDesc': 'Transforma imágenes (JPG, PNG, WEBP) en PDF universales.',
 
-    // Ferramenta: Unir PDF (ConvertSection)
+    // Ferramenta: Unir PDF
     'unir.title': 'Unir PDFs',
     'unir.subtitle': 'Combina varios archivos PDF en un solo documento en segundos.',
     'unir.onlyPdfError': 'Por favor, selecciona solo archivos en formato PDF.',
@@ -138,7 +162,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'unir.downloadBtn': 'Descargar Archivo PDF',
     'unir.thanksTitle': '¡Gracias por usar PropedeuticaPDF!',
     'unir.thanksSubtitle': 'Tu descarga ha comenzado. ¿Cómo fue tu experiencia usando nuestra herramienta?',
-    'unir.rateLabel': 'Tu Calificación (1 a 5 Estrellas):',
+    'unir.rateLabel': 'Tu Calificación (1 a 5 Estrelas):',
     'unir.commentLabel': 'Comentario Anónimo (Opcional):',
     'unir.commentPlaceholder': 'Deja una sugerencia o comentario...',
     'unir.submitRatingBtn': 'Enviar Calificación Anónima',
@@ -146,7 +170,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'unir.ratingSuccess': '¡Tu calificación fue registrada con éxito! Muchas gracias.',
     'unir.backHome': 'Volver a la Página Principal',
 
-    // Ferramenta: OCR Inteligente (OcrSection)
+    // Ferramenta: OCR Inteligente
     'ocr.title': 'OCR Inteligente de PDF e Imagen',
     'ocr.subtitle': 'Reconoce y extrae texto legible con orquestación de IA resiliente.',
     'ocr.invalidFormat': 'Selecciona un archivo PDF o imagen válida.',
@@ -161,7 +185,27 @@ const dictionary: Record<string, Record<string, string>> = {
     'ocr.copyBtn': 'Copiar Texto',
     'ocr.downloadTxt': 'Descargar TXT',
     'ocr.thanksTitle': '¡Gracias por utilizar PropedeuticaPDF!',
-    'ocr.thanksSub': '¿Cómo fue la precisión de la extracción de tu documento?'
+    'ocr.thanksSub': '¿Cómo fue la precisión de la extracción de tu documento?',
+
+    // Ferramenta: Converter para PDF
+    'converter.title': 'Convertir a PDF Universal',
+    'converter.subtitle': 'Transforma fotos e imágenes en PDFs organizados con procesamiento local.',
+    'converter.invalidFormat': 'Selecciona solo archivos de imagen (JPG, PNG, WEBP).',
+    'converter.clickSelect': 'Haz clic para seleccionar imágenes (JPG, PNG, WEBP)',
+    'converter.hint': 'Arrastra varios archivos para ordenar y convertir',
+    'converter.filesCount': 'Imágenes Cargadas',
+    'converter.addMore': 'Añadir más',
+    'converter.modeUnited': 'Todo Unido en 1 PDF',
+    'converter.modeSeparate': 'PDFs Separados',
+    'converter.btnConvert': 'Convertir a PDF',
+    'converter.loadingTitle': 'Convirtiendo archivos a PDF...',
+    'converter.loadingSub': 'Procesamiento 100% local en tu navegador con costo $0.',
+    'converter.readyTitle': '¡Conversión Completada!',
+    'converter.readySub': 'Haz clic abajo para descargar tu(s) archivo(s) PDF.',
+    'converter.downloadBtn': 'Descargar Archivo(s) PDF',
+    'converter.thanksTitle': '¡Gracias por utilizar PropedeuticaPDF!',
+    'converter.thanksSub': '¿Cómo fue tu experiencia al convertir a PDF?',
+    'converter.errorMsg': 'Ocurrió un error al convertir los archivos.'
   },
   en: {
     // Cabeçalho e Rodapé
@@ -184,7 +228,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'home.noComments': 'No text comments registered yet.',
     'home.loadingReviews': 'Loading reviews...',
 
-    // Títulos e Descrições dos Cards de Ferramentas
+    // Cards de Ferramentas
     'tools.unirTitle': 'Merge PDF',
     'tools.unirDesc': 'Combine multiple PDF files into a single organized document.',
     'tools.ocrTitle': 'OCR (Text from PDF)',
@@ -195,8 +239,10 @@ const dictionary: Record<string, Record<string, string>> = {
     'tools.splitDesc': 'Separate pages or extract specific sections from your PDF.',
     'tools.compressTitle': 'Compress PDF',
     'tools.compressDesc': 'Reduce file size while preserving maximum quality.',
+    'tools.converterTitle': 'Convert to PDF',
+    'tools.converterDesc': 'Transform images (JPG, PNG, WEBP) into universal PDFs.',
 
-    // Ferramenta: Unir PDF (ConvertSection)
+    // Ferramenta: Unir PDF
     'unir.title': 'Merge PDFs',
     'unir.subtitle': 'Combine multiple PDF files into one document in seconds.',
     'unir.onlyPdfError': 'Please select PDF format files only.',
@@ -226,7 +272,7 @@ const dictionary: Record<string, Record<string, string>> = {
     'unir.ratingSuccess': 'Your review was registered successfully! Thank you very much.',
     'unir.backHome': 'Back to Home Page',
 
-    // Ferramenta: OCR Inteligente (OcrSection)
+    // Ferramenta: OCR Inteligente
     'ocr.title': 'Smart OCR for PDF & Image',
     'ocr.subtitle': 'Recognize and extract readable text with resilient AI orchestration.',
     'ocr.invalidFormat': 'Please select a valid PDF or image file.',
@@ -241,7 +287,27 @@ const dictionary: Record<string, Record<string, string>> = {
     'ocr.copyBtn': 'Copy Text',
     'ocr.downloadTxt': 'Download TXT',
     'ocr.thanksTitle': 'Thank you for using PropedeuticaPDF!',
-    'ocr.thanksSub': 'How accurate was the text extraction from your document?'
+    'ocr.thanksSub': 'How accurate was the text extraction from your document?',
+
+    // Ferramenta: Converter para PDF
+    'converter.title': 'Convert to Universal PDF',
+    'converter.subtitle': 'Turn photos and images into organized PDFs with local processing.',
+    'converter.invalidFormat': 'Please select image files only (JPG, PNG, WEBP).',
+    'converter.clickSelect': 'Click to select images (JPG, PNG, WEBP)',
+    'converter.hint': 'Drag multiple files to order and convert',
+    'converter.filesCount': 'Loaded Images',
+    'converter.addMore': 'Add more',
+    'converter.modeUnited': 'All Merged into 1 PDF',
+    'converter.modeSeparate': 'Separate PDFs',
+    'converter.btnConvert': 'Convert to PDF',
+    'converter.loadingTitle': 'Converting files to PDF...',
+    'converter.loadingSub': '100% local processing in your browser at $0 cost.',
+    'converter.readyTitle': 'Conversion Completed!',
+    'converter.readySub': 'Click below to download your PDF file(s).',
+    'converter.downloadBtn': 'Download PDF File(s)',
+    'converter.thanksTitle': 'Thank you for using PropedeuticaPDF!',
+    'converter.thanksSub': 'How was your experience converting to PDF?',
+    'converter.errorMsg': 'An error occurred while converting the files.'
   }
 };
 

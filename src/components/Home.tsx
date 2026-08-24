@@ -78,6 +78,14 @@ export const Home: React.FC = () => {
       badge: 'Popular'
     },
     {
+      id: 'converter',
+      title: t('tools.converterTitle', 'Converter para PDF'),
+      description: t('tools.converterDesc', 'Transforme imagens (JPG, PNG, WEBP) em PDF universais.'),
+      icon: FileArchive,
+      href: '/converter.html',
+      badge: 'Novo'
+    },
+    {
       id: 'ocr',
       title: t('tools.ocrTitle', 'OCR (Texto de PDF)'),
       description: t('tools.ocrDesc', 'Reconheça e extraia textos legíveis de PDFs ou imagens escaneadas.'),
