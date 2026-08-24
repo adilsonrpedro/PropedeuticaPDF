@@ -1,8 +1,8 @@
+// src/components/ConvertUniversalSection.tsx
 import React, { useState, useRef, useEffect, ChangeEvent, DragEvent } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import {
   Upload,
-  Image as ImageIcon,
   RotateCw,
   ArrowLeft,
   ArrowRight,
@@ -14,7 +14,8 @@ import {
   Sparkles,
   Home as HomeIcon,
   X,
-  FileText
+  FileText,
+  FileSpreadsheet
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from '../lib/i18n';
@@ -27,6 +28,9 @@ type FunnelStep = 1 | 2 | 3 | 4;
 interface FileItem {
   id: string;
   file: File;
+  isImage: boolean;
+  isPdf: boolean;
+  isOffice: boolean;
   rotation: number;
   previewUrl: string;
 }
@@ -56,7 +60,6 @@ export const ConvertUniversalSection: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Limpeza de URLs temporárias
   useEffect(() => {
     return () => {
       items.forEach((item) => URL.revokeObjectURL(item.previewUrl));
@@ -65,19 +68,31 @@ export const ConvertUniversalSection: React.FC = () => {
 
   const handleAddFiles = (newFiles: FileList | File[]) => {
     setErrorMessage(null);
-    const validFiles = Array.from(newFiles).filter((f) => f.type.startsWith('image/'));
+    const fileList = Array.from(newFiles);
 
-    if (validFiles.length === 0) {
-      setErrorMessage(t('converter.invalidFormat', 'Selecione apenas arquivos de imagem (JPG, PNG, WEBP).'));
-      return;
-    }
+    const newItems: FileItem[] = fileList.map((file) => {
+      const isImg = file.type.startsWith('image/');
+      const isPdf = file.type.includes('pdf') || file.name.endsWith('.pdf');
+      const isOff =
+        file.name.endsWith('.docx') ||
+        file.name.endsWith('.xlsx') ||
+        file.name.endsWith('.pptx') ||
+        file.name.endsWith('.doc') ||
+        file.name.endsWith('.xls') ||
+        file.type.includes('officedocument') ||
+        file.type.includes('msword') ||
+        file.type.includes('ms-excel');
 
-    const newItems: FileItem[] = validFiles.map((file) => ({
-      id: `${file.name}-${Date.now()}-${Math.random()}`,
-      file,
-      rotation: 0,
-      previewUrl: URL.createObjectURL(file)
-    }));
+      return {
+        id: `${file.name}-${Date.now()}-${Math.random()}`,
+        file,
+        isImage: isImg,
+        isPdf,
+        isOffice: isOff,
+        rotation: 0,
+        previewUrl: isImg || isPdf ? URL.createObjectURL(file) : ''
+      };
+    });
 
     setItems((prev) => [...prev, ...newItems]);
   };
@@ -91,7 +106,7 @@ export const ConvertUniversalSection: React.FC = () => {
 
   const handleRotate = (id: string) => {
     setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, rotation: (item.rotation + 90) % 360 } : item))
+      prev.map((item) => (item.id === id && item.isImage ? { ...item, rotation: (item.rotation + 90) % 360 } : item))
     );
   };
 
@@ -107,12 +122,11 @@ export const ConvertUniversalSection: React.FC = () => {
   const handleRemove = (id: string) => {
     setItems((prev) => {
       const itemToRemove = prev.find((i) => i.id === id);
-      if (itemToRemove) URL.revokeObjectURL(itemToRemove.previewUrl);
+      if (itemToRemove && itemToRemove.previewUrl) URL.revokeObjectURL(itemToRemove.previewUrl);
       return prev.filter((i) => i.id !== id);
     });
   };
 
-  // Processamento 100% no cliente usando Canvas e pdf-lib ($0 Custo de Servidor)
   const processImageToJpegBytes = async (file: File, rotation: number): Promise<ArrayBuffer> => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -142,6 +156,7 @@ export const ConvertUniversalSection: React.FC = () => {
     return await fetch(dataUrl).then((res) => res.arrayBuffer());
   };
 
+  // Processamento Híbrido (Local para Imagens/PDF + Servidor para Office)
   const handleConvert = async () => {
     if (items.length === 0) return;
     setStep(2);
@@ -149,35 +164,57 @@ export const ConvertUniversalSection: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      if (outputMode === 'united') {
-        const mergedDoc = await PDFDocument.create();
-        for (const item of items) {
-          const jpegBytes = await processImageToJpegBytes(item.file, item.rotation);
-          const embeddedImg = await mergedDoc.embedJpg(jpegBytes);
-          const page = mergedDoc.addPage([embeddedImg.width, embeddedImg.height]);
-          page.drawImage(embeddedImg, { x: 0, y: 0, width: embeddedImg.width, height: embeddedImg.height });
-        }
-        const pdfBytes = await mergedDoc.save();
-        setGeneratedPdfs([{ name: `${outputFileName}.pdf`, bytes: pdfBytes }]);
-      } else {
-        const pdfsList: GeneratedPdf[] = [];
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
+      const convertedPdfDocs: { name: string; doc: PDFDocument }[] = [];
+
+      for (const item of items) {
+        if (item.isImage) {
           const singleDoc = await PDFDocument.create();
           const jpegBytes = await processImageToJpegBytes(item.file, item.rotation);
           const embeddedImg = await singleDoc.embedJpg(jpegBytes);
           const page = singleDoc.addPage([embeddedImg.width, embeddedImg.height]);
           page.drawImage(embeddedImg, { x: 0, y: 0, width: embeddedImg.width, height: embeddedImg.height });
-          const pdfBytes = await singleDoc.save();
-          const baseName = item.file.name.replace(/\.[^/.]+$/, '');
-          pdfsList.push({ name: `${baseName}-Convertido.pdf`, bytes: pdfBytes });
+          convertedPdfDocs.push({ name: `${item.file.name}.pdf`, doc: singleDoc });
+        } else if (item.isPdf) {
+          const arrayBuffer = await item.file.arrayBuffer();
+          const pdfDoc = await PDFDocument.load(arrayBuffer);
+          convertedPdfDocs.push({ name: item.file.name, doc: pdfDoc });
+        } else if (item.isOffice) {
+          const formData = new FormData();
+          formData.append('file', item.file);
+          const res = await fetch('/api/convert-office', {
+            method: 'POST',
+            body: formData
+          });
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || `Erro ao converter ${item.file.name}`);
+          }
+          const pdfBytes = await res.arrayBuffer();
+          const pdfDoc = await PDFDocument.load(pdfBytes);
+          convertedPdfDocs.push({ name: `${item.file.name}.pdf`, doc: pdfDoc });
+        }
+      }
+
+      if (outputMode === 'united') {
+        const mergedDoc = await PDFDocument.create();
+        for (const item of convertedPdfDocs) {
+          const copiedPages = await mergedDoc.copyPages(item.doc, item.doc.getPageIndices());
+          copiedPages.forEach((p) => mergedDoc.addPage(p));
+        }
+        const finalBytes = await mergedDoc.save();
+        setGeneratedPdfs([{ name: `${outputFileName}.pdf`, bytes: finalBytes }]);
+      } else {
+        const pdfsList: GeneratedPdf[] = [];
+        for (const item of convertedPdfDocs) {
+          const bytes = await item.doc.save();
+          pdfsList.push({ name: item.name, bytes });
         }
         setGeneratedPdfs(pdfsList);
       }
       setStep(3);
     } catch (err: any) {
       console.error(err);
-      setErrorMessage(t('converter.errorMsg', 'Ocorreu um erro ao converter os arquivos.'));
+      setErrorMessage(err.message || t('converter.errorMsg', 'Ocorreu um erro ao converter os arquivos.'));
       setStep(1);
     } finally {
       setIsProcessing(false);
@@ -242,7 +279,7 @@ export const ConvertUniversalSection: React.FC = () => {
                 {t('converter.title', 'Converter para PDF Universal')}
               </h1>
               <p className="text-slate-600 dark:text-slate-300">
-                {t('converter.subtitle', 'Transforme fotos e imagens em PDFs organizados com processamento local.')}
+                {t('converter.subtitle', 'Converta fotos, documentos do Office (Word, Excel, PowerPoint) e PDFs.')}
               </p>
             </div>
 
@@ -253,9 +290,9 @@ export const ConvertUniversalSection: React.FC = () => {
               </div>
             )}
 
-            <input type="file" ref={fileInputRef} onChange={handleFileInputChange} accept="image/*,.jpg,.jpeg,.png,.webp" multiple className="hidden" />
+            <input type="file" ref={fileInputRef} onChange={handleFileInputChange} accept="image/*,.pdf,.docx,.xlsx,.pptx,.doc,.xls,.ppt" multiple className="hidden" />
 
-            {/* DropZone */}
+            {/* DropZone Universal */}
             <div
               onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
@@ -271,23 +308,23 @@ export const ConvertUniversalSection: React.FC = () => {
             >
               <div className="flex flex-col items-center justify-center space-y-3">
                 <div className="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-full text-teal-600 dark:text-teal-400">
-                  <ImageIcon className="w-8 h-8" />
+                  <Upload className="w-8 h-8" />
                 </div>
                 <div className="text-slate-700 dark:text-slate-200 font-semibold">
-                  {t('converter.clickSelect', 'Clique para selecionar imagens (JPG, PNG, WEBP)')}
+                  {t('converter.clickSelect', 'Clique para selecionar Imagens, PDFs ou arquivos Office')}
                 </div>
                 <p className="text-xs text-slate-400">
-                  {t('converter.hint', 'Arraste vários arquivos para ordenar e converter')}
+                  {t('converter.hint', 'Suporta JPG, PNG, WEBP, PDF, DOCX, XLSX e PPTX sem limite')}
                 </p>
               </div>
             </div>
 
-            {/* Grade de Miniaturas com Rotação e Ordenação */}
+            {/* Grade de Miniaturas Híbrida */}
             {items.length > 0 && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                    {t('converter.filesCount', 'Imagens Carregadas')} ({items.length})
+                    {t('converter.filesCount', 'Arquivos Carregados')} ({items.length})
                   </span>
                   <button onClick={() => fileInputRef.current?.click()} className="text-xs font-semibold text-teal-600 hover:underline">
                     + {t('converter.addMore', 'Adicionar mais')}
@@ -298,12 +335,21 @@ export const ConvertUniversalSection: React.FC = () => {
                   {items.map((item, index) => (
                     <div key={item.id} className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between space-y-3">
                       <div className="w-full h-32 bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center relative">
-                        <img
-                          src={item.previewUrl}
-                          alt={item.file.name}
-                          style={{ transform: `rotate(${item.rotation}deg)` }}
-                          className="max-h-full max-w-full object-contain transition-transform duration-200"
-                        />
+                        {item.isImage ? (
+                          <img
+                            src={item.previewUrl}
+                            alt={item.file.name}
+                            style={{ transform: `rotate(${item.rotation}deg)` }}
+                            className="max-h-full max-w-full object-contain transition-transform duration-200"
+                          />
+                        ) : item.isPdf ? (
+                          <embed src={`${item.previewUrl}#page=1&view=Fit`} type="application/pdf" className="w-full h-full object-cover pointer-events-none" />
+                        ) : (
+                          <div className="flex flex-col items-center gap-1 text-teal-600 dark:text-teal-400">
+                            <FileSpreadsheet className="w-10 h-10" />
+                            <span className="text-[10px] font-bold uppercase">Office</span>
+                          </div>
+                        )}
                         <span className="absolute top-1 left-1 bg-slate-900/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
                           #{index + 1}
                         </span>
@@ -313,9 +359,13 @@ export const ConvertUniversalSection: React.FC = () => {
 
                       {/* Controles do Cartão */}
                       <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-700 pt-2">
-                        <button type="button" onClick={() => handleRotate(item.id)} className="p-1 text-teal-600 hover:bg-teal-50 rounded" title="Rotacionar 90°">
-                          <RotateCw className="w-4 h-4" />
-                        </button>
+                        {item.isImage ? (
+                          <button type="button" onClick={() => handleRotate(item.id)} className="p-1 text-teal-600 hover:bg-teal-50 rounded" title="Rotacionar 90°">
+                            <RotateCw className="w-4 h-4" />
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 font-bold uppercase">Documento</span>
+                        )}
                         <div className="flex gap-1">
                           <button type="button" onClick={() => handleMove(index, 'left')} disabled={index === 0} className="p-1 text-slate-400 disabled:opacity-30">
                             <ArrowLeft className="w-4 h-4" />
@@ -384,7 +434,7 @@ export const ConvertUniversalSection: React.FC = () => {
             <Loader2 className="w-16 h-16 text-teal-600 animate-spin" />
             <div className="space-y-2">
               <h2 className="text-2xl font-bold">{t('converter.loadingTitle', 'Convertendo arquivos em PDF...')}</h2>
-              <p className="text-sm text-slate-500">{t('converter.loadingSub', 'Processamento 100% local no seu navegador com custo $0.')}</p>
+              <p className="text-sm text-slate-500">{t('converter.loadingSub', 'Processando imagens localmente e orquestrando documentos do Office.')}</p>
             </div>
           </div>
         )}
